@@ -6,16 +6,9 @@
 
 namespace Okitcom\OkLibMagento\Controller\Ajax;
 
-use Magento\Checkout\Model\Session;
-use OK\Credentials\CashCredentials;
-use OK\Credentials\Environment\DevelopmentEnvironment;
-use OK\Model\Amount;
+use OK\Builder\AttributeBuilder;
+use OK\Builder\AuthorisationRequestBuilder;
 use OK\Model\Attribute;
-use OK\Model\Attributes;
-use OK\Model\Cash\LineItem;
-use OK\Model\Cash\TransactionRequest;
-use OK\Model\Open\AuthorisationRequest;
-use Okitcom\OkLibMagento\Controller\CheckoutAction;
 use Okitcom\OkLibMagento\Controller\OpenAction;
 use Okitcom\OkLibMagento\Helper\ConfigHelper;
 use Okitcom\OkLibMagento\Setup\InstallData;
@@ -28,17 +21,44 @@ class Open extends OpenAction {
             // create object
             $ok = $this->getOpenService();
 
-            $attributes = new Attributes();
-            $attributes->name = Attribute::create("name", "Name", Attribute::TYPE_NAME, true);
-            $attributes->email = Attribute::create("email", "Email", Attribute::TYPE_EMAIL, true);
-            $attributes->address = Attribute::create("address", "Address", Attribute::TYPE_ADDRESS, false);
-            $attributes->phone = Attribute::create("phone", "Phone", Attribute::TYPE_PHONENUMBER, false);
+            $authorisationRequest = (new AuthorisationRequestBuilder())
+                ->setPermissions("TriggerPaymentInitiation")
+                ->setAction("SignupLogin")
+                ->setReference("123")
+                ->addAttribute(
+                    (new AttributeBuilder())
+                        ->setKey("name")
+                        ->setLabel("Name")
+                        ->setType(Attribute::TYPE_NAME)
+                        ->setRequired(true)
+                        ->build()
+                )
+                ->addAttribute(
+                    (new AttributeBuilder())
+                        ->setKey("email")
+                        ->setLabel("Email")
+                        ->setType(Attribute::TYPE_EMAIL)
+                        ->setRequired(true)
+                        ->build()
+                )
+                ->addAttribute(
+                    (new AttributeBuilder())
+                        ->setKey("address")
+                        ->setLabel("Address")
+                        ->setType(Attribute::TYPE_ADDRESS)
+                        ->setRequired(false)
+                        ->build()
+                )
+                ->addAttribute(
+                    (new AttributeBuilder())
+                        ->setKey("phone")
+                        ->setLabel("Phone")
+                        ->setType(Attribute::TYPE_PHONENUMBER)
+                        ->setRequired(false)
+                        ->build()
+                )->build();
 
-            $request = AuthorisationRequest::create("SignupLogin", "123", null);
-            $request->attributes = $attributes;
-            $request->permissions = ["TriggerPaymentInitiation"];
-
-            $response = $ok->request($request);
+            $response = $ok->request($authorisationRequest);
 
             if (isset($response->guid)) {
                 $this->session->setData(InstallData::OK_SESSION_TOKEN, $response->guid);

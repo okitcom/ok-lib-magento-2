@@ -7,8 +7,6 @@
 namespace Okitcom\OkLibMagento\Model\Quote;
 
 
-use Magento\Framework\Exception\LocalizedException;
-
 class Discount extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
 {
     /**

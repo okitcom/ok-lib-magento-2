@@ -9,12 +9,12 @@ namespace Okitcom\OkLibMagento\Block\Middleware;
 
 use Magento\Quote\Model\Quote;
 use OK\Model\Amount;
-use OK\Model\Cash\TransactionResponse;
+use OK\Model\Cash\Transaction;
 
 class DiscountReducer extends AbstractReducer
 {
 
-    function execute(Quote $quote, TransactionResponse $response) {
+    function execute(Quote $quote, Transaction $response) {
 
 //        $items = $response->lineItems->all();
 //        $total = Amount::fromCents(0);

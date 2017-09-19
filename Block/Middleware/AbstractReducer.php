@@ -8,11 +8,11 @@ namespace Okitcom\OkLibMagento\Block\Middleware;
 
 
 use Magento\Quote\Model\Quote;
-use OK\Model\Cash\TransactionResponse;
+use OK\Model\Cash\Transaction;
 
 abstract class AbstractReducer
 {
 
-    abstract function execute(Quote $quote, TransactionResponse $response);
+    abstract function execute(Quote $quote, Transaction $response);
 
 }

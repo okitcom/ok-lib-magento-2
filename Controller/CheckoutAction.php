@@ -9,11 +9,11 @@ namespace Okitcom\OkLibMagento\Controller;
 
 use Magento\Framework\App\Action\Action;
 use Magento\Quote\Model\Quote;
+use OK\Builder\AttributeBuilder;
+use OK\Builder\LineItemBuilder;
+use OK\Builder\TransactionBuilder;
 use OK\Model\Amount;
 use OK\Model\Attribute;
-use OK\Model\Attributes;
-use OK\Model\Cash\LineItem;
-use OK\Model\Cash\TransactionRequest;
 use Okitcom\OkLibMagento\Setup\InstallData;
 
 abstract class CheckoutAction extends Action
@@ -112,47 +112,79 @@ abstract class CheckoutAction extends Action
             // create object
             $ok = $this->checkoutHelper->getCashService();
 
-            $attributes = new Attributes();
-            $attributes->name = Attribute::create("name", "Name", Attribute::TYPE_NAME, true);
-            $attributes->email = Attribute::create("email", "Email", Attribute::TYPE_EMAIL, true);
-            $attributes->address = Attribute::create("address", "Address", Attribute::TYPE_ADDRESS, true);
-            $attributes->phone = Attribute::create("phone", "Phone", Attribute::TYPE_PHONENUMBER, true);
+            $transactionBuilder = (new TransactionBuilder())
+                ->setReference($quote->getId())
+                ->setAmount(Amount::fromEuro($totalAmount))
+                ->setPermissions("TriggerPaymentInitiation")
+                ->addAttribute(
+                    (new AttributeBuilder())
+                    ->setKey("name")
+                    ->setLabel("Name")
+                    ->setType(Attribute::TYPE_NAME)
+                    ->setRequired(true)
+                    ->build()
+                )
+                ->addAttribute(
+                    (new AttributeBuilder())
+                        ->setKey("email")
+                        ->setLabel("Email")
+                        ->setType(Attribute::TYPE_EMAIL)
+                        ->setRequired(true)
+                        ->build()
+                )
+                ->addAttribute(
+                    (new AttributeBuilder())
+                        ->setKey("address")
+                        ->setLabel("Address")
+                        ->setType(Attribute::TYPE_ADDRESS)
+                        ->setRequired(true)
+                        ->build()
+                )
+                ->addAttribute(
+                    (new AttributeBuilder())
+                        ->setKey("phone")
+                        ->setLabel("Phone")
+                        ->setType(Attribute::TYPE_PHONENUMBER)
+                        ->setRequired(true)
+                        ->build()
+                );
+
             if ($this->configHelper->getCheckoutConfig("ask_note")) {
                 // Ask user for a note
-                $attributes->note = Attribute::create("note", "Note", Attribute::TYPE_STRING, false);
+                $transactionBuilder->addAttribute(
+                    (new AttributeBuilder())
+                        ->setKey("note")
+                        ->setLabel("Note")
+                        ->setType(Attribute::TYPE_STRING)
+                        ->setRequired(false)
+                        ->build()
+                );
             }
 
             $initiation = false;
-
-            $request = new TransactionRequest();
-            $request->reference = $quote->getId();
-            $request->amount = Amount::fromEuro($totalAmount);
-            $request->attributes = $attributes;
-            $request->permissions = ["TriggerPaymentInitiation"];
             if ($this->customerSession->isLoggedIn()) {
                 $token = $this->customerSession->getCustomer()->getData(InstallData::OK_TOKEN);
                 if ($token != null) {
-                    $request->initiationToken = $token;
-                    $initiation = true;
+                    $transactionBuilder->setInitiationToken($token);
                 }
             }
 
-            $lineItems = [];
             /** @var \Magento\Quote\Model\Quote\Item $item */
             foreach ($quote->getAllItems() as $item) {
 //                    echo  $item->getQty() . " " . $item->getName() . " " . $item->getPrice() . " - " . $item->getDiscountAmount() . " Calc: " . Amount::fromEuro($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))->getEuro() . "\n";
-                $lineItems[] = LineItem::create(
-                    $item->getQty(),
-                    $item->getSku(),
-                    $item->getName(),
-                    Amount::fromEuro(($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))),
-                    0, // TODO: TAX
-                    "EUR"
+                $transactionBuilder->addLineItem(
+                    (new LineItemBuilder())
+                    ->setQuantity($item->getQty())
+                    ->setProductCode($item->getSku())
+                    ->setDescription($item->getName())
+                    ->setAmount(Amount::fromEuro(($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))))
+                    ->setVat(0) // TODO: TAX
+                    ->setCurrency("EUR")
+                    ->build()
                 );
             }
-            $request->lineItems = $lineItems;
 
-            $response = $ok->request($request);
+            $response = $ok->request($transactionBuilder->build());
 
             $checkout = $this->checkoutFactory->create();
             $checkout->setGuid($response->guid);

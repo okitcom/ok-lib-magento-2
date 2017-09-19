@@ -9,17 +9,17 @@ namespace Okitcom\OkLibMagento\Block\Middleware;
 
 use Magento\Quote\Model\Quote;
 use OK\Model\Attribute;
-use OK\Model\Cash\TransactionResponse;
+use OK\Model\Cash\Transaction;
 
 class AddressReducer extends AbstractReducer
 {
 
-    function execute(Quote $quote, TransactionResponse $response) {
+    function execute(Quote $quote, Transaction $response) {
         $this->mapOkAddress($quote->getShippingAddress(), $response);
         $this->mapOkAddress($quote->getBillingAddress(), $response);
     }
 
-    private function mapOkAddress(Quote\Address $address, TransactionResponse $response) {
+    private function mapOkAddress(Quote\Address $address, Transaction $response) {
         $nameParts = explode(";", $response->attributes->name->value);
         $okAddress = $response->attributes->address;
 

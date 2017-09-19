@@ -9,12 +9,12 @@ namespace Okitcom\OkLibMagento\Block\Middleware;
 
 use Magento\Quote\Model\Quote;
 use OK\Model\Amount;
-use OK\Model\Cash\TransactionResponse;
+use OK\Model\Cash\Transaction;
 
 class NoteReducer extends AbstractReducer
 {
 
-    function execute(Quote $quote, TransactionResponse $response) {
+    function execute(Quote $quote, Transaction $response) {
         $note = $response->attributes->get("note");
         if ($note != null) {
             $quote->setCustomerNote($note->value);

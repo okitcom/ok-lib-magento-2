@@ -8,8 +8,7 @@ namespace Okitcom\OkLibMagento\Block\Middleware;
 
 
 use Magento\Quote\Model\Quote;
-use OK\Model\Cash\TransactionResponse;
-use Okitcom\OkLibMagento\Block\OkCashPayment;
+use OK\Model\Cash\Transaction;
 
 class ShippingReducer extends AbstractReducer
 {
@@ -27,7 +26,7 @@ class ShippingReducer extends AbstractReducer
         $this->configHelper = $configHelper;
     }
 
-    function execute(Quote $quote, TransactionResponse $response) {
+    function execute(Quote $quote, Transaction $response) {
         $shippingAddress=$quote->getShippingAddress();
         $shippingAddress->setCollectShippingRates(true)
             ->collectShippingRates()

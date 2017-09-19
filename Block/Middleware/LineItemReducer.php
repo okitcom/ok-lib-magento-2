@@ -11,7 +11,7 @@ use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote;
 use OK\Model\Amount;
 use OK\Model\Cash\LineItem;
-use OK\Model\Cash\TransactionResponse;
+use OK\Model\Cash\Transaction;
 
 /**
  * Class LineItemReducer. Compares lineitems from OK and applies discounts to magento products
@@ -20,7 +20,7 @@ use OK\Model\Cash\TransactionResponse;
 class LineItemReducer extends AbstractReducer
 {
 
-    function execute(Quote $quote, TransactionResponse $response) {
+    function execute(Quote $quote, Transaction $response) {
 
         $quoteItems = $quote->getAllItems();
 

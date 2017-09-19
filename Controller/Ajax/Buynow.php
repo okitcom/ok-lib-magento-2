@@ -6,17 +6,8 @@
 
 namespace Okitcom\OkLibMagento\Controller\Ajax;
 
-use Magento\Checkout\Model\Session;
-use OK\Credentials\CashCredentials;
-use OK\Credentials\Environment\DevelopmentEnvironment;
-use OK\Model\Amount;
-use OK\Model\Attribute;
-use OK\Model\Attributes;
-use OK\Model\Cash\LineItem;
-use OK\Model\Cash\TransactionRequest;
 use Okitcom\OkLibMagento\Controller\CheckoutAction;
 use Okitcom\OkLibMagento\Helper\ConfigHelper;
-use Okitcom\OkLibMagento\Setup\InstallData;
 
 class Buynow extends CheckoutAction {
 

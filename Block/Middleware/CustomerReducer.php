@@ -8,7 +8,7 @@ namespace Okitcom\OkLibMagento\Block\Middleware;
 
 
 use Magento\Quote\Model\Quote;
-use OK\Model\Cash\TransactionResponse;
+use OK\Model\Cash\Transaction;
 use Okitcom\OkLibMagento\Helper\CustomerHelper;
 use Okitcom\OkLibMagento\Setup\InstallData;
 
@@ -53,7 +53,7 @@ class CustomerReducer extends AbstractReducer
     }
 
 
-    function execute(Quote $quote, TransactionResponse $response) {
+    function execute(Quote $quote, Transaction $response) {
         $store = $this->storeManager->getStore();
 
         $searchResult = $this->customerHelper->findByToken($response->token);

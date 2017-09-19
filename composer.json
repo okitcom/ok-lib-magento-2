@@ -2,7 +2,7 @@
   "name": "okitcom/ok-lib-magento",
   "description": "OK Lib for Magento",
   "require": {
-    "okitcom/ok-lib-php": "1.5.1"
+    "okitcom/ok-lib-php": "1.6.0"
   },
   "version": "1.1.0",
   "license": [

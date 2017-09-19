@@ -10,8 +10,7 @@ namespace Okitcom\OkLibMagento\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Store\Api\Data\StoreInterface;
-use OK\Model\Cash\TransactionResponse;
+use OK\Model\Cash\Transaction;
 use Okitcom\OkLibMagento\Block\Middleware\AddressReducer;
 use Okitcom\OkLibMagento\Block\Middleware\CustomerReducer;
 use Okitcom\OkLibMagento\Block\Middleware\DiscountReducer;
@@ -94,10 +93,10 @@ class QuoteHelper extends AbstractHelper
      * Create Order On Your Store
      *
      * @param Quote $quote
-     * @param TransactionResponse $response
+     * @param Transaction $response
      * @return OrderInterface
      */
-    public function createOrder(Quote $quote, TransactionResponse $response) {
+    public function createOrder(Quote $quote, Transaction $response) {
         $quote->setCurrency();
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();

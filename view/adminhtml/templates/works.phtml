@@ -1,0 +1,10 @@
+<?php
+/**
+ * Works link template
+ *
+ * @var $block \Okitcom\OkLibMagento\Block\Adminhtml\View\Works
+ */
+?>
+<?php if ($block->orderIsOK()) { ?>
+    <p><a href="<?php echo $block->getWorksUrl(); ?>" target="_blank">&rsaquo; <?php echo __("View transaction in OK Works"); ?></a></p>
+<?php } ?>

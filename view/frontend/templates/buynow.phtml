@@ -1,0 +1,11 @@
+<?php
+/**
+ * OK Open button template
+ *
+ * @var $block \Okitcom\OkLibMagento\Block\Button\Buynow
+ */
+?>
+<button id="ok-buynow-button"
+        type="button"
+        data-mage-init='{ "Okitcom_OkLibMagento/buynow": { "product_id": <?php echo $block->getProductId() ?>, "qty": <?php echo $block->getProductQty() ?> } }'
+        class="btn ok-action-button"><?php echo __("Buy now") ?></button>

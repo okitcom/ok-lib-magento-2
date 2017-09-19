@@ -1,0 +1,14 @@
+<?php
+/**
+ * OK Open button template
+ *
+ * @var $block \Okitcom\OkLibMagento\Block\Button\Open
+ */
+?>
+<?php if (!$block->isLoggedIn()) { ?>
+    <li id="ok-open-plugin">
+        <div>
+            <button id="ok-open-button" data-mage-init='{ "Okitcom_OkLibMagento/okopen": { } }' class="btn ok-action-button"><?php echo __("Log in with OK") ?></button>
+        </div>
+    </li>
+<?php } ?>

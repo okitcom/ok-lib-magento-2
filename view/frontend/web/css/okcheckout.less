@@ -1,0 +1,62 @@
+@baseDir: "../";
+
+@ok-button-background-color: #6401c5;
+@ok-button-background-hover-color: #6401c5;
+
+.ok-button-background(@c) when (iscolor(@c)) {
+    background: @c url('@{baseDir}images/roger.png') left top no-repeat;
+    background-size: contain;
+}
+
+
+/**
+ * General OK Button styling
+ */
+.ok-action-button, .ok-action-button:not(.primary) {
+    .ok-button-background(@ok-button-background-color);
+
+    font-family: "Glober";
+    color: #ffffff;
+    border: none;
+
+    padding: 14px 17px 14px 48px;
+    text-transform: uppercase;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.ok-action-button:hover, .ok-action-button:focus {
+    .ok-button-background(@ok-button-background-hover-color);
+
+    border: none;
+    color: #CCCCCC;
+}
+
+/**
+ * Checkout in cart
+ */
+#ok-checkout-button {
+    margin: 15px 0;
+
+    line-height: 2.2rem;
+    font-size: 1.8rem;
+}
+
+/**
+ * Checkout on product page
+ */
+#ok-buynow-button {
+    line-height: 2.2rem;
+    font-size: 1.8rem;
+}
+
+/**
+ * Login button in top bar
+ */
+#ok-open-button {
+    line-height: 10px;
+    font-size: 10px;
+    padding: 6px 16px 6px 16px;
+}

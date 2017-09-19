@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="ok" translate="label" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>OK</label>
+            <tab>service</tab>
+            <resource>Okitcom_OkLibMagento::credentials</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General</label>
+                <field id="environment" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>OK environment</label>
+                    <source_model>Okitcom\OkLibMagento\Model\Config\Source\Environment</source_model>
+                </field>
+                <field id="site_verification_id" translate="label" type="file" sortOrder="6" showInDefault="1" showInWebsite="1" >
+                    <label>Upload site verification file</label>
+                    <comment>Upload the file for the domain validation of your website in OK Works. The file can be found in OK works.</comment>
+                    <backend_model>Okitcom\OkLibMagento\Model\Config\Backend\DomainValidation</backend_model>
+                </field>
+            </group>
+            <group id="open" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>OK Open</label>
+                <field id="enable_open" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable OK Open</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="open_secret" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Open key</label>
+                    <comment>Your key for the OK Open service. Can be found in OK WORKS.</comment>
+                </field>
+            </group>
+            <group id="checkout" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>OK Cash</label>
+                <field id="enable_cash" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cash_secret" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Cash key</label>
+                    <comment>Your key for the OK Cash service. Can be found in OK WORKS.</comment>
+                </field>
+                <field id="enable_buynow" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Show instant checkout button on product pages</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="default_shipping_method" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Default shipping method</label>
+                    <source_model>Okitcom\OkLibMagento\Model\Config\Source\ShippingMethod</source_model>
+                </field>
+                <field id="ask_note" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Ask user for note in order</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

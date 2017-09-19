@@ -1,0 +1,20 @@
+{
+  "name": "okitcom/ok-lib-magento",
+  "description": "OK Lib for Magento",
+  "require": {
+    "okitcom/ok-lib-php": "1.5.1"
+  },
+  "version": "1.1.0",
+  "license": [
+    "Apache-2.0"
+  ],
+  "type": "magento2-module",
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Okitcom\\OkLibMagento\\": ""
+    }
+  }
+}

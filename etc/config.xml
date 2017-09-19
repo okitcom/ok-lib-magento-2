@@ -1,0 +1,29 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <ok>
+            <general>
+                <environment>development</environment>
+            </general>
+            <checkout>
+                <default_shipping_method>freeshipping_freeshipping</default_shipping_method>
+                <ask_note>1</ask_note>
+                <enable_cash>0</enable_cash>
+                <enable_buynow>0</enable_buynow>
+            </checkout>
+            <open>
+                <enable_open>0</enable_open>
+            </open>
+        </ok>
+        <payment>
+            <okcheckout>
+                <model>Okitcom\OkLibMagento\Block\OkCashPayment</model>
+                <title>OK</title>
+                <active>1</active>
+                <currency>EUR</currency>
+                <order_status>complete</order_status>
+                <payment_action>authorize_capture</payment_action>
+                <can_refund>1</can_refund>
+            </okcheckout>
+        </payment>
+    </default>
+</config>

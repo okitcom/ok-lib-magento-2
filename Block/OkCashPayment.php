@@ -68,7 +68,20 @@ class OkCashPayment extends AbstractMethod
         if ($checkout->getState() != "ClosedAndCaptured") {
             throw new LocalizedException(__("OK transaction state is invalid."));
         }
-        //$payment->setAmount($checkout);
+
+        // Match amounts
+        $service = $this->getHelper()->getCashService();
+        $okTransaction = $service->get($checkout->getGuid());
+        if ($okTransaction->amount->getEuro() < $amount) {
+            $this->_logger->error("OK transaction amount was smaller than the transaction.",
+                [
+                    "ok_transaction_amount" => $okTransaction->amount->getEuro(),
+                    "capture_amount" => $amount
+                ]
+            );
+            throw new LocalizedException(__("Transaction could not be processed."));
+        }
+
         $payment->setTransactionAdditionalInfo(
                 self::KEY_OK_TRANSACTION_ID,
                 $checkout->getOkTransactionId());

@@ -100,14 +100,25 @@ abstract class CheckoutAction extends Action
         if ($quote == null) {
             return null;
         }
-//            $shippingAddress = $quote->getShippingAddress();
-//            $shippingAddress->setShippingMethod($this->configHelper->getGeneralConfig("default_shipping_method"))
-//                ->setCollectShippingRates(true)
-//                ->collectShippingRates();
-//            print_r($shippingAddress->getShippingRatesCollection());
-//            die();
-        $totalAmount = $quote->getBaseGrandTotal();
-        if ($totalAmount > 0) {
+        $shippingMethod = $this->configHelper->getCheckoutConfig("default_shipping_method");
+        $shippingAddress = $quote->getShippingAddress();
+        $shippingAddress->setCountryId("NL"); // TODO: Change for estimation
+        $shippingAddress->setPostcode("2611RM");
+        $shippingAddress->setShippingMethod($shippingMethod)
+            ->setCollectShippingRates(true)
+            ->collectShippingRates();
+
+        $carrier = explode("_", $shippingMethod)[0];
+
+        $shippingPrice = 0;
+        $rates = $shippingAddress->getGroupedAllShippingRates();
+        if (isset($rates[$carrier])) {
+            $shippingPrice = $rates[$carrier][0]->getPrice();
+        }
+
+        $totalPrice = $quote->getBaseGrandTotal();
+        if ($totalPrice > 0) {
+            $totalAmount = $totalPrice + $shippingPrice;
 
             // create object
             $ok = $this->checkoutHelper->getCashService();
@@ -118,11 +129,11 @@ abstract class CheckoutAction extends Action
                 ->setPermissions("TriggerPaymentInitiation")
                 ->addAttribute(
                     (new AttributeBuilder())
-                    ->setKey("name")
-                    ->setLabel("Name")
-                    ->setType(Attribute::TYPE_NAME)
-                    ->setRequired(true)
-                    ->build()
+                        ->setKey("name")
+                        ->setLabel("Name")
+                        ->setType(Attribute::TYPE_NAME)
+                        ->setRequired(true)
+                        ->build()
                 )
                 ->addAttribute(
                     (new AttributeBuilder())
@@ -130,6 +141,7 @@ abstract class CheckoutAction extends Action
                         ->setLabel("Email")
                         ->setType(Attribute::TYPE_EMAIL)
                         ->setRequired(true)
+                        //->setVerified(true)
                         ->build()
                 )
                 ->addAttribute(
@@ -146,6 +158,7 @@ abstract class CheckoutAction extends Action
                         ->setLabel("Phone")
                         ->setType(Attribute::TYPE_PHONENUMBER)
                         ->setRequired(true)
+                        //->setVerified(true)
                         ->build()
                 );
 
@@ -174,11 +187,25 @@ abstract class CheckoutAction extends Action
 //                    echo  $item->getQty() . " " . $item->getName() . " " . $item->getPrice() . " - " . $item->getDiscountAmount() . " Calc: " . Amount::fromEuro($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))->getEuro() . "\n";
                 $transactionBuilder->addLineItem(
                     (new LineItemBuilder())
-                    ->setQuantity($item->getQty())
-                    ->setProductCode($item->getSku())
-                    ->setDescription($item->getName())
-                    ->setAmount(Amount::fromEuro(($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))))
-                    ->setVat(0) // TODO: TAX
+                        ->setQuantity($item->getQty())
+                        ->setProductCode($item->getSku())
+                        ->setDescription($item->getName())
+                        ->setAmount(Amount::fromEuro(($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))))
+                        ->setVat(0) // TODO: TAX
+                        ->setCurrency("EUR")
+                        ->build()
+                );
+            }
+
+            if ($shippingPrice > 0) {
+                // Add shipping as a line item.
+                $transactionBuilder->addLineItem(
+                    (new LineItemBuilder())
+                    ->setQuantity(1)
+                    ->setProductCode("shipping_" . $shippingMethod)
+                    ->setDescription("Shipping")
+                    ->setAmount(Amount::fromEuro($shippingPrice))
+                    ->setVat(0)
                     ->setCurrency("EUR")
                     ->build()
                 );

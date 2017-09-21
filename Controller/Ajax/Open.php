@@ -39,6 +39,7 @@ class Open extends OpenAction {
                         ->setLabel("Email")
                         ->setType(Attribute::TYPE_EMAIL)
                         ->setRequired(true)
+                        //->setVerified(true)
                         ->build()
                 )
                 ->addAttribute(

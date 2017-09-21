@@ -70,7 +70,7 @@ class Cash extends CheckoutAction {
                 // process
                 $quote = $this->quoteRepository->get($checkout->getQuoteId());
 
-                if (ConfigHelper::TEST_MODE || $checkout->getSalesOrderId() != null) {
+                if (ConfigHelper::TEST_MODE || $checkout->getSalesOrderId() == null) {
                     // update
 
                     $order = $this->quoteHelper->createOrder($quote, $okresponse);

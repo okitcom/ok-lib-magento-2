@@ -5,8 +5,7 @@
             <referenceContainer name="payment_additional_info">
                 <block class="Okitcom\OkLibMagento\Block\Adminhtml\View\Works"
                        name="sales_order_view_ok_works"
-                       template="Okitcom_OkLibMagento::works.phtml"
-                       ifconfig="ok/checkout/active" />
+                       template="Okitcom_OkLibMagento::works.phtml" />
             </referenceContainer>
         </referenceContainer>
     </body>

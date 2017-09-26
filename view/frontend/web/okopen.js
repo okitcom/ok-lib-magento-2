@@ -17,24 +17,32 @@ define(
 
         return function (config, element) {
 
+            var started = false;
             $(element).on('click', function(e) {
-                $.ajax({
-                    showLoader: true,
-                    url: '/oklib/ajax/open',
-                    data: "",
-                    type: "GET",
-                    dataType: 'json'
-                }).done(function (data) {
-                    window.$ = $;
-                    window.oklib.init('a', data.guid, {
-                        color: "dark",
-                        culture: data.culture,
-                        loaded: oklib.start,
-                        callback: function (status, guid) {
-                            window.location = url.build("oklib/callback/open") + "?q=" + data.guid;
-                        }
-                    }, data.environment);
-                });
+
+                if (started) {
+                    window.oklib.show();
+                } else {
+                    started = true;
+                    $.ajax({
+                        showLoader: true,
+                        url: '/oklib/ajax/open',
+                        data: "",
+                        type: "GET",
+                        dataType: 'json'
+                    }).done(function (data) {
+                        window.$ = $;
+                        window.oklib.init('a', data.guid, {
+                            color: "dark",
+                            culture: data.culture,
+                            loaded: oklib.start,
+                            callback: function (status, guid) {
+                                window.location = url.build("oklib/callback/open") + "?q=" + data.guid;
+                            }
+                        }, data.environment);
+
+                    });
+                }
             });
 
 

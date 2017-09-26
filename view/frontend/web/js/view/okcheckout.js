@@ -18,6 +18,8 @@ define(
          * <Vendor>_<Module>  - is the name of the your module directory.
          *
          */
+        window.okCashStarted = false;
+
         return Component.extend({
             defaults: {
                 template: 'Okitcom_OkLibMagento/okcheckout'
@@ -43,26 +45,32 @@ define(
              */
             open: function () {
 
-                $.ajax({
-                    showLoader: true,
-                    url: '/oklib/ajax/cash',
-                    data: "",
-                    type: "GET",
-                    dataType: 'json'
-                }).done(function (data) {
-                    window.$ = $;
-                    window.oklib.init('t', data.guid, {
-                        color: "dark",
-                        culture: data.culture,
-                        loaded: oklib.start,
-                        initiation: data.initiation,
-                        callback: function (status, guid) {
-                            window.location = url.build("oklib/callback/cash") + "?q=" + data.guid;
-                        }
-                        //redirectUrl: "http://www.nu.nl/"
-                        //redirectUrl: url.build("oklib/callback/cash") + "?q=" + data.guid
-                    }, data.environment);
-                });
+                if (window.okCashStarted) {
+                    window.oklib.show();
+                } else {
+                    window.okCashStarted = true;
+
+                    $.ajax({
+                        showLoader: true,
+                        url: '/oklib/ajax/cash',
+                        data: "",
+                        type: "GET",
+                        dataType: 'json'
+                    }).done(function (data) {
+                        window.$ = $;
+                        window.oklib.init('t', data.guid, {
+                            color: "dark",
+                            culture: data.culture,
+                            loaded: oklib.start,
+                            initiation: data.initiation,
+                            callback: function (status, guid) {
+                                window.location = url.build("oklib/callback/cash") + "?q=" + data.guid;
+                            }
+                            //redirectUrl: "http://www.nu.nl/"
+                            //redirectUrl: url.build("oklib/callback/cash") + "?q=" + data.guid
+                        }, data.environment);
+                    });
+                }
             }
         });
     }

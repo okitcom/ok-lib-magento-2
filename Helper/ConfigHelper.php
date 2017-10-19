@@ -29,6 +29,8 @@ class ConfigHelper extends AbstractHelper
     ];
     const DEFAULT_LOCALE = "en_GB";
 
+    const OK_BASE_URL = "okit.io";
+
     public function __construct(Context $context,
                                 ObjectManagerInterface $objectManager,
                                 StoreManagerInterface $storeManager

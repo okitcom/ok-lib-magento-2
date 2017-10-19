@@ -83,6 +83,12 @@ class CheckoutHelper extends AbstractHelper
         return $this->checkoutFactory->create()->load($id);
     }
 
+    public function getWorksUrl(\Okitcom\OkLibMagento\Model\Checkout $order) {
+        $env = $this->configHelper->getOkLibEnvironment();
+        $transactionId = $order->getOkTransactionId();
+        return "https://" . $env . "." . ConfigHelper::OK_BASE_URL . "/okworks/#/transactions/" . $transactionId;
+    }
+
     /**
      * @return \OK\Service\Cash
      */

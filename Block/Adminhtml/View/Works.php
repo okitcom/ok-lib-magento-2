@@ -46,13 +46,12 @@ class Works extends Template
         return null;
     }
 
-
+    /**
+     * Get the url of this transaction in OK Works.
+     * @return string
+     */
     public function getWorksUrl() {
-        $order = $this->getOrderOK();
-        $env = "dev";
-        $transactionId = $order->getOkTransactionId();
-        $url = "https://" . $env . ".okit.com/okworks/#/transactions/" . $transactionId;
-        return $url;
+        return $this->_checkoutHelper->getWorksUrl($this->getOrderOK());
     }
 
 }

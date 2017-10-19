@@ -123,8 +123,11 @@ abstract class CheckoutAction extends Action
             // create object
             $ok = $this->checkoutHelper->getCashService();
 
+            $redirectUrl = $this->_url->getUrl("oklib/callback/cash");
+
             $transactionBuilder = (new TransactionBuilder())
                 ->setReference($quote->getId())
+                ->setRedirectUrl($redirectUrl)
                 ->setAmount(Amount::fromEuro($totalAmount))
                 ->setPermissions("TriggerPaymentInitiation")
                 ->addAttribute(

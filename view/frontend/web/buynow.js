@@ -1,11 +1,13 @@
 define(
     [
         'jquery',
-        'mage/url'
+        'mage/url',
+        'Okitcom_OkLibMagento/oklibpresenter'
     ],
     function (
         $,
-        url
+        url,
+        oklibpresenter
     ) {
         'use strict';
         /**
@@ -17,15 +19,11 @@ define(
 
         return function (config, element) {
 
-            var started = false;
+            const type = 'cash';
             $(element).on('click', function(e) {
                 e.preventDefault();
 
-                if (started) {
-                    window.oklib.show();
-                } else {
-                    started = true;
-
+                if (!oklibpresenter.showExisting(type)) {
                     var qtyObj = $("#product_addtocart_form #qty");
                     var qty = config.qty;
                     if (qtyObj !== 'undefined') {
@@ -42,18 +40,10 @@ define(
                         type: "GET",
                         dataType: 'json'
                     }).done(function (data) {
-                        window.$ = $;
-                        window.oklib.init('t', data.guid, {
-                            color: "dark",
-                            culture: data.culture,
-                            initiation: data.initiation,
-                            loaded: oklib.start,
-                            callback: function (status, guid) {
-                                window.location = url.build("oklib/callback/cash") + "?q=" + data.guid;
-                            }
-                        }, data.environment);
+                        oklibpresenter.showNew(type, data);
                     });
                 }
+
             });
 
 

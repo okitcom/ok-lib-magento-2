@@ -8,7 +8,8 @@ var config = {
         '*': {
             //oklib:                'Okitcom_OkLibMagento/js/oklib',
             okopen:               'Okitcom_OkLibMagento/js/okopen',
-            buynow:               'Okitcom_OkLibMagento/js/buynow'
+            buynow:               'Okitcom_OkLibMagento/js/buynow',
+            oklibpresenter:       'Okitcom_OkLibMagento/js/oklibpresenter'
         }
     }
 };

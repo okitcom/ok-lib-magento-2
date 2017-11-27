@@ -1,11 +1,13 @@
 define(
     [
         'jquery',
-        'mage/url'
+        'mage/url',
+        'Okitcom_OkLibMagento/oklibpresenter'
     ],
     function (
         $,
-        url
+        url,
+        oklibpresenter
     ) {
         'use strict';
         /**
@@ -17,13 +19,11 @@ define(
 
         return function (config, element) {
 
-            var started = false;
+            const type = 'open';
             $(element).on('click', function(e) {
 
-                if (started) {
-                    window.oklib.show();
-                } else {
-                    started = true;
+                if (!oklibpresenter.showExisting(type)) {
+
                     $.ajax({
                         showLoader: true,
                         url: '/oklib/ajax/open',
@@ -31,18 +31,11 @@ define(
                         type: "GET",
                         dataType: 'json'
                     }).done(function (data) {
-                        window.$ = $;
-                        window.oklib.init('a', data.guid, {
-                            color: "dark",
-                            culture: data.culture,
-                            loaded: oklib.start,
-                            callback: function (status, guid) {
-                                window.location = url.build("oklib/callback/open") + "?q=" + data.guid;
-                            }
-                        }, data.environment);
-
+                        oklibpresenter.showNew(type, data);
                     });
+
                 }
+
             });
 
 

@@ -3,13 +3,15 @@ define(
         'ko',
         'uiComponent',
         'jquery',
-        'mage/url'
+        'mage/url',
+        'Okitcom_OkLibMagento/oklibpresenter'
     ],
     function (
         ko,
         Component,
         $,
-        url
+        url,
+        oklibpresenter
     ) {
         'use strict';
         /**
@@ -45,10 +47,8 @@ define(
              */
             open: function () {
 
-                if (window.okCashStarted) {
-                    window.oklib.show();
-                } else {
-                    window.okCashStarted = true;
+                const type = 'cash';
+                if (!oklibpresenter.showExisting(type)) {
 
                     $.ajax({
                         showLoader: true,
@@ -57,18 +57,7 @@ define(
                         type: "GET",
                         dataType: 'json'
                     }).done(function (data) {
-                        window.$ = $;
-                        window.oklib.init('t', data.guid, {
-                            color: "dark",
-                            culture: data.culture,
-                            loaded: oklib.start,
-                            initiation: data.initiation,
-                            callback: function (status, guid) {
-                                window.location = url.build("oklib/callback/cash") + "?q=" + data.guid;
-                            }
-                            //redirectUrl: "http://www.nu.nl/"
-                            //redirectUrl: url.build("oklib/callback/cash") + "?q=" + data.guid
-                        }, data.environment);
+                        oklibpresenter.showNew(type, data);
                     });
                 }
             }

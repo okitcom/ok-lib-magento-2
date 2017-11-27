@@ -9,11 +9,6 @@ define(
     ) {
         'use strict';
 
-        /**
-         * Either cash or open
-         */
-        const current = window.okLibType;
-
         var getLibType = function(type) {
             switch (type) {
                 case "open":
@@ -26,6 +21,11 @@ define(
 
         return {
             showExisting: function (type) {
+                window.$ = $;
+                /**
+                 * Either cash or open
+                 */
+                const current = window.okLibType;
                 if (current === type) {
                     // just show the lib
                     window.oklib.show();
@@ -34,11 +34,15 @@ define(
                 return false;
             },
             showNew: function (type, data) {
+                window.$ = $;
+                /**
+                 * Either cash or open
+                 */
+                const current = window.okLibType;
                 if (current !== null) {
                     window.oklib.remove();
                 }
                 window.okLibType = type;
-                window.$ = $;
                 window.oklib.init(getLibType(type), data.guid, {
                     color: "dark",
                     culture: data.culture,

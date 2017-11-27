@@ -100,24 +100,25 @@ abstract class CheckoutAction extends Action
         if ($quote == null) {
             return null;
         }
-        $shippingMethod = $this->configHelper->getCheckoutConfig("default_shipping_method");
-        $shippingAddress = $quote->getShippingAddress();
-        $shippingAddress->setCountryId("NL"); // TODO: Change for estimation
-        $shippingAddress->setPostcode("2611RM");
-        $shippingAddress->setShippingMethod($shippingMethod)
-            ->setCollectShippingRates(true)
-            ->collectShippingRates();
-
-        $carrier = explode("_", $shippingMethod)[0];
-
-        $shippingPrice = 0;
-        $rates = $shippingAddress->getGroupedAllShippingRates();
-        if (isset($rates[$carrier])) {
-            $shippingPrice = $rates[$carrier][0]->getPrice();
-        }
 
         $totalPrice = $quote->getBaseGrandTotal();
         if ($totalPrice > 0) {
+            $shippingMethod = $this->configHelper->getCheckoutConfig("default_shipping_method");
+            $shippingAddress = $quote->getShippingAddress();
+            $shippingAddress->setCountryId("NL"); // TODO: Change for estimation
+            $shippingAddress->setPostcode("2611RM");
+            $shippingAddress->setShippingMethod($shippingMethod)
+                ->setCollectShippingRates(true)
+                ->collectShippingRates();
+
+            $carrier = explode("_", $shippingMethod)[0];
+
+            $shippingPrice = 0;
+            $rates = $shippingAddress->getGroupedAllShippingRates();
+            if (isset($rates[$carrier])) {
+                $shippingPrice = $rates[$carrier][0]->getPrice();
+            }
+
             $totalAmount = $totalPrice + $shippingPrice;
 
             // create object
@@ -188,15 +189,26 @@ abstract class CheckoutAction extends Action
             /** @var \Magento\Quote\Model\Quote\Item $item */
             foreach ($quote->getAllItems() as $item) {
 //                    echo  $item->getQty() . " " . $item->getName() . " " . $item->getPrice() . " - " . $item->getDiscountAmount() . " Calc: " . Amount::fromEuro($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))->getEuro() . "\n";
-                $transactionBuilder->addLineItem(
-                    (new LineItemBuilder())
-                        ->setQuantity($item->getQty())
-                        ->setProductCode($item->getSku())
-                        ->setDescription($item->getName())
-                        ->setAmount(Amount::fromEuro(($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))))
-                        ->setVat(0) // TODO: TAX
+                $lineItemBuilder = (new LineItemBuilder())
+                    ->setQuantity($item->getQty())
+                    ->setProductCode($item->getSku())
+                    ->setDescription($item->getName())
+                    ->setAmount(Amount::fromEuro($item->getPrice()))
+                    ->setVat(0) // TODO: TAX
+                    ->setCurrency("EUR");
+                if ($item->getDiscountAmount() > 0) {
+                    $lineItemBuilder->addSubItem(
+                        (new LineItemBuilder())
+                        ->setQuantity(1)
+                        ->setAmount(Amount::fromEuro(- $item->getDiscountAmount()))
+                        ->setVat(0)
+                        ->setDescription("Magento discount")
                         ->setCurrency("EUR")
                         ->build()
+                    );
+                }
+                $transactionBuilder->addLineItem(
+                       $lineItemBuilder->build()
                 );
             }
 
@@ -213,6 +225,9 @@ abstract class CheckoutAction extends Action
                     ->build()
                 );
             }
+//            print_r($transactionBuilder->build());
+//            echo "\nTOTAL " . $totalAmount;
+//die();
 
             $response = $ok->request($transactionBuilder->build());
 

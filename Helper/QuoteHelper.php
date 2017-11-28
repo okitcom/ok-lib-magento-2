@@ -35,6 +35,11 @@ class QuoteHelper extends AbstractHelper
     private $cartManagementInterface;
     private $cartRepositoryInterface;
 
+    /**
+     * @var \Magento\Framework\DataObject\Factory
+     */
+    private $objectFactory;
+
     private $reducers = [
         CustomerReducer::class,
         AddressReducer::class,
@@ -55,6 +60,7 @@ class QuoteHelper extends AbstractHelper
      * @param \Magento\Sales\Model\Service\OrderService $orderService,
      * @param \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
      * @param \Magento\Framework\Api\FilterBuilder $filterBuilder
+     * @param \Magento\Framework\DataObject\Factory $objectFactory
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -70,7 +76,8 @@ class QuoteHelper extends AbstractHelper
         \Magento\Framework\Api\FilterBuilder $filterBuilder,
         \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper,
         \Magento\Quote\Api\CartRepositoryInterface $cartRepositoryInterface,
-        \Magento\Quote\Api\CartManagementInterface $cartManagementInterface
+        \Magento\Quote\Api\CartManagementInterface $cartManagementInterface,
+        \Magento\Framework\DataObject\Factory $objectFactory
     ) {
         $this->_storeManager = $storeManager;
         $this->_product = $product;
@@ -85,6 +92,7 @@ class QuoteHelper extends AbstractHelper
         $this->configHelper = $configHelper;
         $this->cartRepositoryInterface = $cartRepositoryInterface;
         $this->cartManagementInterface = $cartManagementInterface;
+        $this->objectFactory = $objectFactory;
         parent::__construct($context);
     }
 
@@ -139,7 +147,7 @@ class QuoteHelper extends AbstractHelper
 
             $quote->addProduct(
                 $product,
-                intval($item['qty'])
+                $this->objectFactory->create($item['request'])
             );
         }
         $quote->collectTotals()->save();

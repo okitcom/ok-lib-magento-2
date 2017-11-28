@@ -2,7 +2,8 @@ define(
     [
         'jquery',
         'mage/url',
-        'Okitcom_OkLibMagento/oklibpresenter'
+        'Okitcom_OkLibMagento/oklibpresenter',
+        'mage/validation'
     ],
     function (
         $,
@@ -16,27 +17,35 @@ define(
          * <Vendor>_<Module>  - is the name of the your module directory.
          *
          */
+        var lastSelectedOptions = null;
 
         return function (config, element) {
 
             const type = 'cash';
+            const addtocart_form_selector = "#product_addtocart_form";
             $(element).on('click', function(e) {
                 e.preventDefault();
 
-                if (!oklibpresenter.showExisting(type)) {
-                    var qtyObj = $("#product_addtocart_form #qty");
-                    var qty = config.qty;
-                    if (qtyObj !== 'undefined') {
-                        qty = qtyObj.val();
-                    }
+                var form = $(addtocart_form_selector);
 
+                // TODO: Check if user changed the select options
+                var formData = form.serialize();
+                if (lastSelectedOptions !== formData) {
+                    oklibpresenter.remove();
+                }
+                lastSelectedOptions = formData;
+
+                // Check if options are valid
+                var valid = form.validation('isValid');
+                if (!valid) {
+                    return;
+                }
+
+                if (!oklibpresenter.showExisting(type)) {
                     $.ajax({
                         showLoader: true,
                         url: '/oklib/ajax/buynow',
-                        data: {
-                            product_id: config.product_id,
-                            qty: qty
-                        },
+                        data: lastSelectedOptions,
                         type: "GET",
                         dataType: 'json'
                     }).done(function (data) {

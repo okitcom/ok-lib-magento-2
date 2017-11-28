@@ -51,6 +51,14 @@ define(
                         window.location = url.build("oklib/callback/" + type) + "?q=" + data.guid;
                     }
                 }, data.environment);
+            },
+            remove: function () {
+                window.$ = $;
+                const current = window.okLibType;
+                if (current !== null) {
+                    window.oklib.remove();
+                }
+                window.okLibType = null;
             }
         };
 

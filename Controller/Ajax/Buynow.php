@@ -15,10 +15,9 @@ class Buynow extends CheckoutAction {
         if (ConfigHelper::TEST_MODE || $this->getRequest()->isAjax()) {
 
             $request = $this->getRequest();
-            $product_id = $request->getParam("product_id");
-            $qty = $request->getParam("qty");
+            $product_id = (int)$request->getParam("product");
 
-            if ($product_id == null || $qty == null) {
+            if ($product_id == null) {
                 return $this->json([
                     "error" => "Invalid product."
                 ]);
@@ -26,7 +25,7 @@ class Buynow extends CheckoutAction {
 
             $quote = $this->quoteHelper->createQuote([[
                 'product_id' => $product_id,
-                'qty' => $qty
+                'request' => $request->getParams()
             ]]);
 
             $result = $this->requestCash($quote);

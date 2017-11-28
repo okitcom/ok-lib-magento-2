@@ -46,10 +46,7 @@ define(
                 window.oklib.init(getLibType(type), data.guid, {
                     color: "dark",
                     culture: data.culture,
-                    loaded: oklib.start,
-                    callback: function (status, guid) {
-                        window.location = url.build("oklib/callback/" + type) + "?q=" + data.guid;
-                    }
+                    loaded: oklib.start
                 }, data.environment);
             },
             remove: function () {

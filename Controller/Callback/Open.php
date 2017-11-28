@@ -50,7 +50,7 @@ class Open extends OpenAction {
 
 
     public function execute() {
-        $guid = $this->getRequest()->getParam("q");
+        $guid = $this->getRequest()->getParam("okguid");
 
         // clear guid session var when not in test mode
         if ($guid != null && $this->session->getData(InstallData::OK_SESSION_TOKEN, !ConfigHelper::TEST_MODE) == $guid) {

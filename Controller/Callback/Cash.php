@@ -9,6 +9,7 @@ namespace Okitcom\OkLibMagento\Controller\Callback;
 
 use Okitcom\OkLibMagento\Controller\CheckoutAction;
 use Okitcom\OkLibMagento\Helper\ConfigHelper;
+use Okitcom\OkLibMagento\Model\Checkout;
 use Okitcom\OkLibMagento\Model\CheckoutFactory;
 use Okitcom\OkLibMagento\Model\Resource\Checkout\Collection;
 
@@ -57,49 +58,51 @@ class Cash extends CheckoutAction {
 
 
     public function execute() {
-        $guid = $this->getRequest()->getParam("q");
-        $okresponse = $this->checkoutHelper->getCashService()->get($guid);
+        $guid = $this->getRequest()->getParam("okguid");
 
-        $checkouts = $this->checkoutCollection->addFieldToFilter("guid", $guid);
-        $checkout = $checkouts->getFirstItem();
-        if ($checkout != null) {
-            // get status
-            $checkout->setState($okresponse->state);
-            $checkout->save();
-            if (isset($okresponse->authorisationResult) && $okresponse->authorisationResult->result == "OK") {
-                // process
-                $quote = $this->quoteRepository->get($checkout->getQuoteId());
+        if ($guid != null) {
+            $okresponse = $this->checkoutHelper->getCashService()->get($guid);
+            $checkouts = $this->checkoutCollection->addFieldToFilter("guid", $guid);
+            /** @var Checkout $checkout */
+            $checkout = $checkouts->getFirstItem();
+            if ($checkout != null) {
+                // get status
+                $checkout->setState($okresponse->state);
+                $checkout->save();
+                if (isset($okresponse->authorisationResult) && $okresponse->authorisationResult->result == "OK") {
+                    // process
+                    $quote = $this->quoteRepository->get($checkout->getQuoteId());
 
-                if (ConfigHelper::TEST_MODE || $checkout->getSalesOrderId() == null) {
-                    // update
+                    if (ConfigHelper::TEST_MODE || $checkout->getSalesOrderId() == null) {
+                        // update
 
-                    $order = $this->quoteHelper->createOrder($quote, $okresponse);
+                        $order = $this->quoteHelper->createOrder($quote, $okresponse);
 
-                    $this->session->setLastQuoteId($quote->getId());
-                    $this->session->setLastQuoteId($quote->getId());
-                    $this->session->setLastSuccessQuoteId($quote->getId());
-                    $this->session->setLastOrderId($order->getId());
-                    $this->session->setLastRealOrderId($order->getIncrementId());
-                    $this->session->setLastOrderStatus($order->getStatus());
+                        $this->session->setLastQuoteId($quote->getId());
+                        $this->session->setLastQuoteId($quote->getId());
+                        $this->session->setLastSuccessQuoteId($quote->getId());
+                        $this->session->setLastOrderId($order->getId());
+                        $this->session->setLastRealOrderId($order->getIncrementId());
+                        $this->session->setLastOrderStatus($order->getStatus());
 
-                    $checkout->setSalesOrderId($order->getEntityId());
-                    $checkout->save();
+                        $checkout->setSalesOrderId($order->getEntityId());
+                        $checkout->save();
 
-                    $redirect = $this->resultRedirectFactory->create();
-                    $redirect->setPath( 'checkout/onepage/success');
-                    $this->messageManager->addSuccessMessage(__(
-                        "OK Cash Status OK"
-                    ));
-                    return $redirect;
+                        $redirect = $this->resultRedirectFactory->create();
+                        $redirect->setPath( 'checkout/onepage/success');
+                        $this->messageManager->addSuccessMessage(__(
+                            "OK Cash Status OK"
+                        ));
+                        return $redirect;
+                    }
                 }
-
             }
         }
 
         // Show a checkout error
         $redirect = $this->resultRedirectFactory->create();
         $redirect->setPath( 'checkout/onepage/failure');
-        if (isset($okresponse->authorisationResult)) {
+        if (isset($okresponse) && isset($okresponse->authorisationResult)) {
             $this->messageManager->addErrorMessage(__(
                 "OK Cash Status " . $okresponse->authorisationResult->result
             ));

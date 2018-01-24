@@ -53,7 +53,7 @@ class Open extends OpenAction {
         $guid = $this->getRequest()->getParam("okguid");
 
         // clear guid session var when not in test mode
-        if ($guid != null && $this->session->getData(InstallData::OK_SESSION_TOKEN, !ConfigHelper::TEST_MODE) == $guid) {
+        if ($guid != null) {
             $response = $this->getOpenService()->get($guid);
 
             if (isset($response->authorisationResult)) {
@@ -85,9 +85,15 @@ class Open extends OpenAction {
                 $this->messageManager->addErrorMessage(__(
                     "OK Open Status " . $response->authorisationResult->result
                 ));
+                $redirect = $this->resultRedirectFactory->create();
+                $redirect->setPath( 'customer/account/login');
+                return $redirect;
             }
         }
 
+        $this->messageManager->addErrorMessage(__(
+            "OK Open Status ERROR"
+        ));
         $redirect = $this->resultRedirectFactory->create();
         $redirect->setPath( 'customer/account/login');
         return $redirect;

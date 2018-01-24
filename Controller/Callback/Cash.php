@@ -73,7 +73,7 @@ class Cash extends CheckoutAction {
                     // process
                     $quote = $this->quoteRepository->get($checkout->getQuoteId());
 
-                    if (ConfigHelper::TEST_MODE || $checkout->getSalesOrderId() == null) {
+                    if ($checkout->getSalesOrderId() == null) {
                         // update
 
                         $order = $this->quoteHelper->createOrder($quote, $okresponse);
@@ -87,14 +87,14 @@ class Cash extends CheckoutAction {
 
                         $checkout->setSalesOrderId($order->getEntityId());
                         $checkout->save();
-
-                        $redirect = $this->resultRedirectFactory->create();
-                        $redirect->setPath( 'checkout/onepage/success');
-                        $this->messageManager->addSuccessMessage(__(
-                            "OK Cash Status OK"
-                        ));
-                        return $redirect;
                     }
+
+                    $redirect = $this->resultRedirectFactory->create();
+                    $redirect->setPath( 'checkout/onepage/success');
+                    $this->messageManager->addSuccessMessage(__(
+                        "OK Cash Status OK"
+                    ));
+                    return $redirect;
                 }
             }
         }

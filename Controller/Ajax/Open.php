@@ -45,14 +45,6 @@ class Open extends OpenAction {
                 )
                 ->addAttribute(
                     (new AttributeBuilder())
-                        ->setKey("address")
-                        ->setLabel("Address")
-                        ->setType(Attribute::TYPE_ADDRESS)
-                        ->setRequired(false)
-                        ->build()
-                )
-                ->addAttribute(
-                    (new AttributeBuilder())
                         ->setKey("phone")
                         ->setLabel("Phone")
                         ->setType(Attribute::TYPE_PHONENUMBER)
@@ -63,8 +55,6 @@ class Open extends OpenAction {
             $response = $ok->request($authorisationRequest);
 
             if (isset($response->guid)) {
-                $this->session->setData(InstallData::OK_SESSION_TOKEN, $response->guid);
-
                 return $this->json([
                     "guid" => $response->guid,
                     "culture" => $this->getLocale(),

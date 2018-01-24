@@ -1,6 +1,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <script src="https://dev.okit.io/js/oklib/dist/oklib.min.js" src_type="url" />
+        <css src="Okitcom_OkLibMagento/css/glober.css" />
         <css src="Okitcom_OkLibMagento/css/okcheckout.css" />
     </head>
     <body>

@@ -14,7 +14,7 @@
 .ok-action-button, .ok-action-button:not(.primary) {
     .ok-button-background(@ok-button-background-color);
 
-    font-family: "Glober";
+    font-family: "GloberRegular", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #ffffff;
     border: none;
 
@@ -55,7 +55,14 @@
  * Login button in top bar
  */
 #ok-open-button {
-    line-height: 10px;
-    font-size: 10px;
-    padding: 6px 16px 6px 21px;
+    line-height: 0.8em;
+    font-size: 0.8em;
+    padding: 0.6em 1.6em 0.6em 1.9em;
+}
+
+// Mobile
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s) {
+    #ok-open-button {
+
+    }
 }

@@ -24,6 +24,11 @@ class ConfigHelper extends AbstractHelper
     const XML_PATH_OKGENERAL = 'ok/general/';
     const TEST_MODE = true;
 
+    const PENDING_STATES = [
+        "NewPendingTrigger", "NewPendingApproval"
+    ];
+    const SUCCESS_STATE = "ClosedAndCaptured";
+
     const SUPPORTED_LOCALES = [
         "nl_NL", "en_GB"
     ];

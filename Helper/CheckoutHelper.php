@@ -12,14 +12,15 @@ use Magento\Framework\Exception\LocalizedException;
 use OK\Credentials\CashCredentials;
 use OK\Credentials\Environment\DevelopmentEnvironment;
 use OK\Credentials\Environment\ProductionEnvironment;
+use Okitcom\OkLibMagento\Model\Resource\Checkout\Collection;
 
 class CheckoutHelper extends AbstractHelper
 {
 
     /**
-     * @var \Okitcom\OkLibMagento\Model\Resource\Checkout\Collection $checkoutCollection
+     * @var \Okitcom\OkLibMagento\Model\Resource\Checkout\CollectionFactory $checkoutCollectionFactory
      */
-    protected $checkoutCollection;
+    protected $checkoutCollectionFactory;
 
     /**
      * @var \Okitcom\OkLibMagento\Model\CheckoutFactory
@@ -34,15 +35,15 @@ class CheckoutHelper extends AbstractHelper
     /**
      * Checkout constructor.
      * @param \Magento\Framework\App\Helper\Context $context
-     * @param \Okitcom\OkLibMagento\Model\Resource\Checkout\Collection $checkoutCollection
+     * @param \Okitcom\OkLibMagento\Model\Resource\Checkout\CollectionFactory $checkoutCollectionFactory
      * @param \Okitcom\OkLibMagento\Model\CheckoutFactory $checkoutFactory
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Okitcom\OkLibMagento\Model\Resource\Checkout\Collection $checkoutCollection,
+        \Okitcom\OkLibMagento\Model\Resource\Checkout\CollectionFactory $checkoutCollectionFactory,
         \Okitcom\OkLibMagento\Model\CheckoutFactory $checkoutFactory,
         \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper) {
-        $this->checkoutCollection = $checkoutCollection;
+        $this->checkoutCollectionFactory = $checkoutCollectionFactory;
         $this->checkoutFactory = $checkoutFactory;
         $this->configHelper = $configHelper;
         parent::__construct($context);
@@ -54,7 +55,7 @@ class CheckoutHelper extends AbstractHelper
      * @return \Okitcom\OkLibMagento\Model\Checkout|null
      */
     public function getByGuid($guid) {
-        $checkouts = $this->checkoutCollection->addFieldToFilter("guid", $guid);
+        $checkouts = $this->checkoutCollectionFactory->create()->addFieldToFilter("guid", $guid);
         return $checkouts->getFirstItem();
     }
 
@@ -64,7 +65,7 @@ class CheckoutHelper extends AbstractHelper
      * @return \Okitcom\OkLibMagento\Model\Checkout|null
      */
     public function getByQuote($quoteId) {
-        $checkouts = $this->checkoutCollection->addFieldToFilter("quote_id", $quoteId);
+        $checkouts = $this->checkoutCollectionFactory->create()->addFieldToFilter("quote_id", $quoteId);
         return $checkouts->getFirstItem();
     }
 
@@ -74,13 +75,21 @@ class CheckoutHelper extends AbstractHelper
      * @return \Okitcom\OkLibMagento\Model\Checkout|null
      */
     public function getByOrderId($salesOrderId) {
-        $checkouts = $this->checkoutCollection->addFieldToFilter("sales_order_id", $salesOrderId);
+        $checkouts = $this->checkoutCollectionFactory->create()->addFieldToFilter("sales_order_id", $salesOrderId);
         return $checkouts->getFirstItem();
     }
 
-
     public function getById($id) {
         return $this->checkoutFactory->create()->load($id);
+    }
+
+    /**
+     * @return Collection|null
+     */
+    public function getAllPending() {
+        $checkouts = $this->checkoutCollectionFactory->create()
+            ->addFieldToFilter("state", ConfigHelper::PENDING_STATES);
+        return $checkouts;
     }
 
     public function getWorksUrl(\Okitcom\OkLibMagento\Model\Checkout $order) {
@@ -91,6 +100,7 @@ class CheckoutHelper extends AbstractHelper
 
     /**
      * @return \OK\Service\Cash
+     * @throws LocalizedException
      */
     public function getCashService() {
         $credentials = new CashCredentials("", $this->configHelper->getCheckoutConfig("cash_secret"), $this->getEnvironment());
@@ -99,6 +109,10 @@ class CheckoutHelper extends AbstractHelper
         return $ok;
     }
 
+    /**
+     * @return DevelopmentEnvironment|ProductionEnvironment
+     * @throws LocalizedException
+     */
     public function getEnvironment() {
         switch ($this->configHelper->getGeneralConfig("environment")) {
             case "development":

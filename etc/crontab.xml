@@ -1,0 +1,7 @@
+<config>
+    <group id="default">
+        <job name="okitcom_oklibmagento_transaction_status" instance="Okitcom\OkLibMagento\Cron\TransactionStatus" method="execute">
+            <schedule>* * * * *</schedule>
+        </job>
+    </group>
+</config>

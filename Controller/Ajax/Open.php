@@ -25,6 +25,7 @@ class Open extends OpenAction {
                 ->setPermissions("TriggerPaymentInitiation")
                 ->setAction("SignupLogin")
                 ->setRedirectUrl($this->_url->getUrl("oklib/callback/open"))
+                ->setReference("Online")
                 ->addAttribute(
                     (new AttributeBuilder())
                         ->setKey("name")

@@ -87,8 +87,13 @@ class CheckoutHelper extends AbstractHelper
      * @return Collection|null
      */
     public function getAllPending() {
+        $fromDate = date(ConfigHelper::DATE_DB_FORMAT, strtotime(ConfigHelper::DATE_PENDING_OFFSET));
+
         $checkouts = $this->checkoutCollectionFactory->create()
-            ->addFieldToFilter("state", ConfigHelper::PENDING_STATES);
+            ->addFieldToFilter("state", ConfigHelper::PENDING_STATES)
+            ->addFieldToFilter("updated_at", [
+                "from" => $fromDate
+            ]);
         return $checkouts;
     }
 

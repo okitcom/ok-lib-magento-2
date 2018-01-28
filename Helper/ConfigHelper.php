@@ -24,6 +24,8 @@ class ConfigHelper extends AbstractHelper
     const XML_PATH_OKGENERAL = 'ok/general/';
     const TEST_MODE = true;
 
+    const DATE_DB_FORMAT = 'Y-m-d H:i:s';
+    const DATE_PENDING_OFFSET = ' -1 day'; // One day in the past
     const PENDING_STATES = [
         "NewPendingTrigger", "NewPendingApproval"
     ];

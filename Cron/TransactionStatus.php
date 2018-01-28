@@ -61,6 +61,7 @@ class TransactionStatus {
 
         $okCash = $this->checkoutHelper->getCashService();
         $transactions = $this->checkoutHelper->getAllPending();
+//        $this->logger->info("Found " . $transactions->count() . " tx to update");
         $updated = 0;
         $completed = 0;
         $still_pending = 0;

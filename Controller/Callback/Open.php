@@ -63,7 +63,7 @@ class Open extends OpenAction {
                         $response->token,
                         $response->attributes->get("name"),
                         $response->attributes->get("email"),
-                        $response->attributes->get("address")
+                        null
                     );
 
                     $this->customerSession->setCustomerDataAsLoggedIn($customer);

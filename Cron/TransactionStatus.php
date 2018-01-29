@@ -108,10 +108,9 @@ class TransactionStatus {
      */
     private function createOrder(Checkout $checkout, $okResponse) {
         // process
-        $quote = $this->quoteRepository->get($checkout->getQuoteId());
-
         if ($checkout->getSalesOrderId() == null) {
             // update
+            $quote = $this->quoteRepository->get($checkout->getQuoteId());
             $order = $this->quoteHelper->createOrder($quote, $okResponse);
 
             $checkout->setSalesOrderId($order->getEntityId());

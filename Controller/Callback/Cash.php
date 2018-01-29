@@ -71,11 +71,9 @@ class Cash extends CheckoutAction {
                 $checkout->save();
                 if (isset($okresponse->authorisationResult) && $okresponse->authorisationResult->result == "OK") {
                     // process
-                    $quote = $this->quoteRepository->get($checkout->getQuoteId());
-
                     if ($checkout->getSalesOrderId() == null) {
                         // update
-
+                        $quote = $this->quoteRepository->get($checkout->getQuoteId());
                         $order = $this->quoteHelper->createOrder($quote, $okresponse);
 
                         $this->session->setLastQuoteId($quote->getId());

@@ -63,9 +63,8 @@ class Cash extends CheckoutAction {
         $externalId = $this->getRequest()->getParam("transaction");
 
         if ($externalId != null) {
-            $checkouts = $this->checkoutCollection->addFieldToFilter("external_id", $externalId);
             /** @var Checkout $checkout */
-            $checkout = $checkouts->getFirstItem();
+            $checkout = $this->checkoutHelper->getByExternalId($externalId);
             $okresponse = $this->checkoutHelper->getCashService()->get($checkout->getGuid());
             if ($checkout != null) {
                 // get status

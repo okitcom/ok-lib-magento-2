@@ -77,7 +77,7 @@ class TransactionStatus {
                     $item->setState($okResponse->state);
                     $item->save();
 
-                    if ($okResponse->state == ConfigHelper::SUCCESS_STATE) {
+                    if ($okResponse->state == ConfigHelper::STATE_CHECKOUT_SUCCESS) {
                         $this->createOrder($item, $okResponse);
                         $completed++;
                     }

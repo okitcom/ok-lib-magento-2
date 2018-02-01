@@ -29,7 +29,8 @@ class ConfigHelper extends AbstractHelper
     const PENDING_STATES = [
         "NewPendingTrigger", "NewPendingApproval"
     ];
-    const SUCCESS_STATE = "ClosedAndCaptured";
+    const STATE_CHECKOUT_SUCCESS = "ClosedAndCaptured";
+    const STATE_AUTHORIZATION_SUCCESS = "Processed";
 
     const SUPPORTED_LOCALES = [
         "nl_NL", "en_GB"

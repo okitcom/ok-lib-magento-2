@@ -35,16 +35,16 @@ class CheckoutHelper extends AbstractHelper
     /**
      * Checkout constructor.
      * @param \Magento\Framework\App\Helper\Context $context
-     * @param \Okitcom\OkLibMagento\Model\Resource\Checkout\CollectionFactory $checkoutCollectionFactory
-     * @param \Okitcom\OkLibMagento\Model\CheckoutFactory $checkoutFactory
+     * @param \Okitcom\OkLibMagento\Model\Resource\Checkout\CollectionFactory $authorizationCollectionFactory
+     * @param \Okitcom\OkLibMagento\Model\CheckoutFactory $authorizationFactory
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Okitcom\OkLibMagento\Model\Resource\Checkout\CollectionFactory $checkoutCollectionFactory,
-        \Okitcom\OkLibMagento\Model\CheckoutFactory $checkoutFactory,
+        \Okitcom\OkLibMagento\Model\Resource\Checkout\CollectionFactory $authorizationCollectionFactory,
+        \Okitcom\OkLibMagento\Model\CheckoutFactory $authorizationFactory,
         \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper) {
-        $this->checkoutCollectionFactory = $checkoutCollectionFactory;
-        $this->checkoutFactory = $checkoutFactory;
+        $this->checkoutCollectionFactory = $authorizationCollectionFactory;
+        $this->checkoutFactory = $authorizationFactory;
         $this->configHelper = $configHelper;
         parent::__construct($context);
     }
@@ -77,7 +77,7 @@ class CheckoutHelper extends AbstractHelper
     public function getFinalByQuote($quoteId) {
         $checkouts = $this->checkoutCollectionFactory->create()
             ->addFieldToFilter("quote_id", $quoteId)
-            ->addFieldToFilter("state", ConfigHelper::SUCCESS_STATE)
+            ->addFieldToFilter("state", ConfigHelper::STATE_CHECKOUT_SUCCESS)
             ->addFieldToFilter("sales_order_id", array('null' => true));
         return $checkouts->getFirstItem();
     }
@@ -89,6 +89,11 @@ class CheckoutHelper extends AbstractHelper
      */
     public function getByOrderId($salesOrderId) {
         $checkouts = $this->checkoutCollectionFactory->create()->addFieldToFilter("sales_order_id", $salesOrderId);
+        return $checkouts->getFirstItem();
+    }
+
+    public function getByExternalId($externalId) {
+        $checkouts = $this->checkoutCollectionFactory->create()->addFieldToFilter("external_id", $externalId);
         return $checkouts->getFirstItem();
     }
 

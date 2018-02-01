@@ -33,6 +33,8 @@ class Open extends OpenAction {
      * @param \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper
      * @param CustomerHelper $customerHelper
      * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Framework\Math\Random $mathRandom
+     * @param \Okitcom\OkLibMagento\Helper\AuthorizationHelper $authorizationHelper
      * @internal param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      */
     public function __construct(
@@ -41,23 +43,32 @@ class Open extends OpenAction {
         \Magento\Catalog\Model\Session $catalogSession,
         \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper,
         \Okitcom\OkLibMagento\Helper\CustomerHelper $customerHelper,
-        \Magento\Customer\Model\Session $customerSession
+        \Magento\Customer\Model\Session $customerSession,
+        \Magento\Framework\Math\Random $mathRandom,
+        \Okitcom\OkLibMagento\Helper\AuthorizationHelper $authorizationHelper
     ) {
         $this->customerHelper = $customerHelper;
         $this->customerSession = $customerSession;
-        parent::__construct($context, $resultJsonFactory, $catalogSession, $configHelper);
+        parent::__construct($context, $resultJsonFactory, $catalogSession, $configHelper, $mathRandom, $authorizationHelper);
     }
 
 
     public function execute() {
-        $guid = $this->getRequest()->getParam("okguid");
+        $externalId = $this->getRequest()->getParam("authorization");
 
         // clear guid session var when not in test mode
-        if ($guid != null) {
-            $response = $this->getOpenService()->get($guid);
+        if ($externalId != null) {
+            $authorization = $this->authorizationHelper->getByExternalId($externalId);
+            $response = $this->getOpenService()->get($authorization->getGuid());
 
-            if (isset($response->authorisationResult)) {
-                if ($response->authorisationResult->result == "OK") {
+            if ($authorization != null && $response != null) {
+
+                // Only sign in once
+                $shouldSignin = $authorization->getState() != ConfigHelper::STATE_AUTHORIZATION_SUCCESS;
+                $authorization->setState($response->state);
+                $authorization->save();
+
+                if ($shouldSignin && $response->state == ConfigHelper::STATE_AUTHORIZATION_SUCCESS) {
                     // log in user
                     $customer = $this->customerHelper->findOrCreate(
                         $response->token,

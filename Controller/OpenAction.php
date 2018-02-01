@@ -14,6 +14,7 @@ use OK\Credentials\Environment\Environment;
 use OK\Credentials\Environment\ProductionEnvironment;
 use OK\Credentials\OpenCredentials;
 use OK\Service\Open;
+use Okitcom\OkLibMagento\Helper\AuthorizationHelper;
 
 abstract class OpenAction extends Action
 {
@@ -34,23 +35,39 @@ abstract class OpenAction extends Action
     protected $configHelper;
 
     /**
+     * @var \Magento\Framework\Math\Random $mathRandom
+     */
+    protected $mathRandom;
+
+    /**
+     * @var AuthorizationHelper
+     */
+    protected $authorizationHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Catalog\Model\Session $session
      * @param \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper
+     * @param \Magento\Framework\Math\Random $mathRandom
+     * @param \Okitcom\OkLibMagento\Helper\AuthorizationHelper $authorizationHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Catalog\Model\Session $session,
-        \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper
+        \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper,
+        \Magento\Framework\Math\Random $mathRandom,
+        \Okitcom\OkLibMagento\Helper\AuthorizationHelper $authorizationHelper
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->session = $session;
         $this->configHelper = $configHelper;
+        $this->mathRandom = $mathRandom;
+        $this->authorizationHelper = $authorizationHelper;
         parent::__construct($context);
     }
 

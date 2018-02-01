@@ -18,13 +18,24 @@ class Open extends OpenAction {
     public function execute() {
         if (ConfigHelper::TEST_MODE || $this->getRequest()->isAjax()) {
 
+            $externalId = $this->mathRandom->getRandomString(24);
+
+            $authorization = $this->authorizationHelper->create();
+            $authorization->setExternalId($externalId);
+            $authorization->save();
+
+            $redirectUrl = $this->_url->getUrl("oklib/callback/open", [
+                "_secure" => true,
+                "authorization" => $externalId
+            ]);
+
             // create object
             $ok = $this->getOpenService();
 
             $authorisationRequest = (new AuthorisationRequestBuilder())
                 ->setPermissions("TriggerPaymentInitiation")
                 ->setAction("SignupLogin")
-                ->setRedirectUrl($this->_url->getUrl("oklib/callback/open"))
+                ->setRedirectUrl($redirectUrl)
                 ->setReference("Online")
                 ->addAttribute(
                     (new AttributeBuilder())
@@ -53,6 +64,11 @@ class Open extends OpenAction {
                 )->build();
 
             $response = $ok->request($authorisationRequest);
+
+            $authorization->setGuid($response->guid);
+            $authorization->setOkTransactionId($response->id);
+            $authorization->setState($response->state);
+            $authorization->save();
 
             if (isset($response->guid)) {
                 return $this->json([

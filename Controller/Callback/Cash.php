@@ -7,6 +7,7 @@
 namespace Okitcom\OkLibMagento\Controller\Callback;
 
 
+use OK\Model\Network\Exception\NetworkException;
 use Okitcom\OkLibMagento\Controller\CheckoutAction;
 use Okitcom\OkLibMagento\Helper\ConfigHelper;
 use Okitcom\OkLibMagento\Model\Checkout;
@@ -65,7 +66,16 @@ class Cash extends CheckoutAction {
         if ($externalId != null) {
             /** @var Checkout $checkout */
             $checkout = $this->checkoutHelper->getByExternalId($externalId);
-            $okresponse = $this->checkoutHelper->getCashService()->get($checkout->getGuid());
+            try {
+                $okresponse = $this->checkoutHelper->getCashService()->get($checkout->getGuid());
+            } catch (NetworkException $exception) {
+                $redirect = $this->resultRedirectFactory->create();
+                $redirect->setPath( 'checkout/onepage/failure');
+                $this->messageManager->addErrorMessage(__(
+                    "OK Cash Status NOTFOUND"
+                ));
+                return $redirect;
+            }
             if ($checkout != null) {
                 // get status
                 $checkout->setState($okresponse->state);

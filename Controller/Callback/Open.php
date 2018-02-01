@@ -7,6 +7,7 @@
 namespace Okitcom\OkLibMagento\Controller\Callback;
 
 
+use OK\Model\Network\Exception\NetworkException;
 use Okitcom\OkLibMagento\Controller\OpenAction;
 use Okitcom\OkLibMagento\Helper\ConfigHelper;
 use Okitcom\OkLibMagento\Helper\CustomerHelper;
@@ -59,7 +60,16 @@ class Open extends OpenAction {
         // clear guid session var when not in test mode
         if ($externalId != null) {
             $authorization = $this->authorizationHelper->getByExternalId($externalId);
-            $response = $this->getOpenService()->get($authorization->getGuid());
+            try {
+                $response = $this->getOpenService()->get($authorization->getGuid());
+            } catch (NetworkException $exception) {
+                $this->messageManager->addErrorMessage(__(
+                    "OK Open Status NOTFOUND"
+                ));
+                $redirect = $this->resultRedirectFactory->create();
+                $redirect->setPath( 'customer/account/login');
+                return $redirect;
+            }
 
             if ($authorization != null && $response != null) {
 

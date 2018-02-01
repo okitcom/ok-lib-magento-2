@@ -11,7 +11,7 @@
 "OK Open Status NotOKCancelled","Your OK request was cancelled."
 "OK Open Status OPEN","Your OK request is still open. Please complete it in your app."
 "OK Open Status ERROR","Your OK request failed."
-"OK Cash Status NOTFOUND","Your login attempt failed."
+"OK Open Status NOTFOUND","Your login attempt failed."
 
 "OK Cash Status OK","Succesfully paid with OK"
 "OK Cash Status NotOKExpired","Your OK request has expired. Please try again."

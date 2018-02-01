@@ -64,8 +64,8 @@ class OkCashPayment extends AbstractMethod
         // this is basically a formality
         /** @var Order $order */
         $order = $payment->getOrder();
-        $checkout = $this->getHelper()->getByQuote($order->getQuoteId());
-        if ($checkout->getState() != "ClosedAndCaptured") {
+        $checkout = $this->getHelper()->getFinalByQuote($order->getQuoteId());
+        if ($checkout == null) {
             throw new LocalizedException(__("OK transaction state is invalid."));
         }
 

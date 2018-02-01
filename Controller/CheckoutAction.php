@@ -55,6 +55,11 @@ abstract class CheckoutAction extends Action
     protected $quoteHelper;
 
     /**
+     * @var \Magento\Framework\Math\Random
+     */
+    private $mathRandom;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context $context
@@ -65,6 +70,7 @@ abstract class CheckoutAction extends Action
      * @param \Okitcom\OkLibMagento\Helper\CheckoutHelper $checkoutHelper
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Okitcom\OkLibMagento\Helper\QuoteHelper $quoteHelper
+     * @param \Magento\Framework\Math\Random $mathRandom
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -74,7 +80,8 @@ abstract class CheckoutAction extends Action
         \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper,
         \Okitcom\OkLibMagento\Helper\CheckoutHelper $checkoutHelper,
         \Magento\Customer\Model\Session $customerSession,
-        \Okitcom\OkLibMagento\Helper\QuoteHelper $quoteHelper
+        \Okitcom\OkLibMagento\Helper\QuoteHelper $quoteHelper,
+        \Magento\Framework\Math\Random $mathRandom
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
@@ -84,6 +91,7 @@ abstract class CheckoutAction extends Action
         $this->checkoutHelper = $checkoutHelper;
         $this->customerSession = $customerSession;
         $this->quoteHelper = $quoteHelper;
+        $this->mathRandom = $mathRandom;
         parent::__construct($context);
     }
 
@@ -121,10 +129,19 @@ abstract class CheckoutAction extends Action
 
             $totalAmount = $totalPrice + $shippingPrice;
 
+            $externalIdentifier = $this->mathRandom->getRandomString(24);
+            $checkout = $this->checkoutFactory->create();
+            $checkout->setExternalId($externalIdentifier);
+            $checkout->setQuoteId($quote->getId());
+            $checkout->save();
+
             // create object
             $ok = $this->checkoutHelper->getCashService();
 
-            $redirectUrl = $this->_url->getUrl("oklib/callback/cash");
+            $redirectUrl = $this->_url->getUrl("oklib/callback/cash", [
+                "_secure" => true,
+                "transaction" => $externalIdentifier
+            ]);
 
             $transactionBuilder = (new TransactionBuilder())
                 ->setReference($quote->getId())
@@ -231,9 +248,7 @@ abstract class CheckoutAction extends Action
 
             $response = $ok->request($transactionBuilder->build());
 
-            $checkout = $this->checkoutFactory->create();
             $checkout->setGuid($response->guid);
-            $checkout->setQuoteId($quote->getId());
             $checkout->setOkTransactionId($response->id);
             $checkout->setState($response->state);
             $checkout->save();

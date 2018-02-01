@@ -43,6 +43,12 @@ class InstallSchema implements InstallSchemaInterface
             ['identity' => false, 'unsigned' => true, 'nullable' => true, 'primary' => false],
             'Quote Id'
         )->addColumn(
+            'external_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            255,
+            ['nullable' => false, 'primary' => false],
+            'External Identifier'
+        )->addColumn(
             'ok_transaction_id',
             \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
             null,

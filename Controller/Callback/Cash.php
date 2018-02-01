@@ -38,6 +38,7 @@ class Cash extends CheckoutAction {
      * @param \Okitcom\OkLibMagento\Helper\QuoteHelper $quoteHelper
      * @param \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper
      * @param \Okitcom\OkLibMagento\Helper\CheckoutHelper $checkoutHelper
+     * @param \Magento\Framework\Math\Random $mathRandom
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -49,22 +50,23 @@ class Cash extends CheckoutAction {
         \Magento\Customer\Model\Session $customerSession,
         \Okitcom\OkLibMagento\Helper\QuoteHelper $quoteHelper,
         \Okitcom\OkLibMagento\Helper\ConfigHelper $configHelper,
-        \Okitcom\OkLibMagento\Helper\CheckoutHelper $checkoutHelper
+        \Okitcom\OkLibMagento\Helper\CheckoutHelper $checkoutHelper,
+        \Magento\Framework\Math\Random $mathRandom
     ) {
         $this->quoteRepository = $quoteRepository;
         $this->checkoutCollection = $checkoutCollection;
-        parent::__construct($context, $resultJsonFactory, $session, $checkoutFactory, $configHelper, $checkoutHelper, $customerSession, $quoteHelper);
+        parent::__construct($context, $resultJsonFactory, $session, $checkoutFactory, $configHelper, $checkoutHelper, $customerSession, $quoteHelper, $mathRandom);
     }
 
 
     public function execute() {
-        $guid = $this->getRequest()->getParam("okguid");
+        $externalId = $this->getRequest()->getParam("transaction");
 
-        if ($guid != null) {
-            $okresponse = $this->checkoutHelper->getCashService()->get($guid);
-            $checkouts = $this->checkoutCollection->addFieldToFilter("guid", $guid);
+        if ($externalId != null) {
+            $checkouts = $this->checkoutCollection->addFieldToFilter("external_id", $externalId);
             /** @var Checkout $checkout */
             $checkout = $checkouts->getFirstItem();
+            $okresponse = $this->checkoutHelper->getCashService()->get($checkout->getGuid());
             if ($checkout != null) {
                 // get status
                 $checkout->setState($okresponse->state);

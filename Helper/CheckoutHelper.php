@@ -70,6 +70,19 @@ class CheckoutHelper extends AbstractHelper
     }
 
     /**
+     * Load checkout that is finalized.
+     * @param $quoteId
+     * @return \Okitcom\OkLibMagento\Model\Checkout|null
+     */
+    public function getFinalByQuote($quoteId) {
+        $checkouts = $this->checkoutCollectionFactory->create()
+            ->addFieldToFilter("quote_id", $quoteId)
+            ->addFieldToFilter("state", ConfigHelper::SUCCESS_STATE)
+            ->addFieldToFilter("sales_order_id", array('null' => true));
+        return $checkouts->getFirstItem();
+    }
+
+    /**
      * Load checkout.
      * @param $salesOrderId
      * @return \Okitcom\OkLibMagento\Model\Checkout|null

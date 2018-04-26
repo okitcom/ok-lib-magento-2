@@ -21,7 +21,6 @@ define(
 
         return {
             showExisting: function (type) {
-                window.$ = $;
                 /**
                  * Either cash or open
                  */
@@ -34,25 +33,24 @@ define(
                 return false;
             },
             showNew: function (type, data) {
-                window.$ = $;
                 /**
                  * Either cash or open
                  */
                 const current = window.okLibType;
-                if (current !== null) {
+                if (typeof current !== 'undefined' && current != null) {
                     window.oklib.remove();
                 }
                 window.okLibType = type;
                 window.oklib.init(getLibType(type), data.guid, {
                     color: "dark",
                     culture: data.culture,
-                    loaded: oklib.start
+                    loaded: oklib.start,
+                    initiation: data.initiation
                 }, data.environment);
             },
             remove: function () {
-                window.$ = $;
                 const current = window.okLibType;
-                if (current !== null) {
+                if (typeof current !== 'undefined') {
                     window.oklib.remove();
                 }
                 window.okLibType = null;

@@ -41,7 +41,9 @@ define(
                     return;
                 }
 
+
                 if (!oklibpresenter.showExisting(type)) {
+                    $(element).addClass("ok-button-progress");
                     $.ajax({
                         showLoader: true,
                         url: '/oklib/ajax/buynow',
@@ -49,7 +51,10 @@ define(
                         type: "GET",
                         dataType: 'json'
                     }).done(function (data) {
+                        $(element).removeClass("ok-button-progress");
                         oklibpresenter.showNew(type, data);
+                    }).error(function(err, data) {
+                        $(element).removeClass("ok-button-progress");
                     });
                 }
 

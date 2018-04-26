@@ -15,8 +15,8 @@ class NoteReducer extends AbstractReducer
 {
 
     function execute(Quote $quote, Transaction $response) {
-        $note = $response->attributes->get("note");
-        if ($note != null) {
+        if (isset($response->attributes->note)) {
+            $note = $response->attributes->get("note");
             $quote->setCustomerNote($note->value);
             $quote->save();
         }

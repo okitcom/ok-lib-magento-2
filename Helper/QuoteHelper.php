@@ -150,9 +150,19 @@ class QuoteHelper extends AbstractHelper
                 $this->objectFactory->create($item['request'])
             );
         }
-        $quote->collectTotals()->save();
+        $quote->setTotalsCollectedFlag(false)
+            ->collectTotals()
+            ->save();
 
         return $quote;
+    }
+
+    /**
+     * Create empty quote object
+     * @return Quote fresh quote object
+     */
+    public function createEmptyQuote() {
+        return $this->quote->create();
     }
 
 }

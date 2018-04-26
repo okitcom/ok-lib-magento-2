@@ -1,0 +1,27 @@
+/** Undo Luma styles **/
+button.ok-action-button-default {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    margin-left: 15px;
+}
+
+button.ok-action-button-default:hover {
+    background-color: #6401c5;
+}
+
+/** Login button in header must be smaller **/
+#ok-open-button {
+    height: 22px;
+}
+
+#ok-open-button .ok-button-icon {
+    height: 22px;
+    width: 22px;
+}
+
+#ok-open-button .ok-button-text {
+    font-size: 12px;
+    line-height: 12px;
+}
+

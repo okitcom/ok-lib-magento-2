@@ -8,4 +8,7 @@
 <button id="ok-buynow-button"
         type="button"
         data-mage-init='{ "Okitcom_OkLibMagento/buynow": { "product_id": <?php echo $block->getProductId() ?>, "qty": <?php echo $block->getProductQty() ?> } }'
-        class="btn ok-action-button"><?php echo __("Buy now") ?></button>
+        class="btn ok-action-button-default icon-right icon-horizontal">
+    <span class="ok-button-icon"></span>
+    <span class="ok-button-text"><?php echo __('Buy now with') ?></span>
+</button>

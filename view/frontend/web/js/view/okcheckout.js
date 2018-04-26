@@ -50,6 +50,8 @@ define(
                 const type = 'cash';
                 if (!oklibpresenter.showExisting(type)) {
 
+                    $(this).addClass("ok-button-progress");
+
                     $.ajax({
                         showLoader: true,
                         url: '/oklib/ajax/cash',
@@ -57,7 +59,10 @@ define(
                         type: "GET",
                         dataType: 'json'
                     }).done(function (data) {
+                        $(this).removeClass("ok-button-progress");
                         oklibpresenter.showNew(type, data);
+                    }).error(function(err, data) {
+                        $(element).removeClass("ok-button-progress");
                     });
                 }
             }

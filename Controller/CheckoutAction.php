@@ -103,13 +103,22 @@ abstract class CheckoutAction extends Action
     protected function requestCash(Quote $quote = null) {
         // get data
         if ($quote == null) {
-            $quote = $this->session->getQuote();
-        }
-        if ($quote == null) {
-            return null;
+            $referenceQuote = $this->session->getQuote();
+            if ($referenceQuote == null) {
+                return null;
+            }
+
+            $quote = $this->quoteHelper->createEmptyQuote(); // load empty cart quote
+            $quote->setStoreId($referenceQuote->getStoreId());
+
+            $quote->merge($referenceQuote)
+                ->setTotalsCollectedFlag(false)
+                ->collectTotals()
+                ->save();
         }
 
         $totalPrice = $quote->getBaseGrandTotal();
+
         if ($totalPrice > 0) {
             $shippingMethod = $this->configHelper->getCheckoutConfig("default_shipping_method");
             $shippingAddress = $quote->getShippingAddress();
@@ -206,22 +215,25 @@ abstract class CheckoutAction extends Action
             /** @var \Magento\Quote\Model\Quote\Item $item */
             foreach ($quote->getAllItems() as $item) {
 //                    echo  $item->getQty() . " " . $item->getName() . " " . $item->getPrice() . " - " . $item->getDiscountAmount() . " Calc: " . Amount::fromEuro($item->getPrice() - ($item->getDiscountAmount() / $item->getQty()))->getEuro() . "\n";
+                $itemPrice = Amount::fromEuro(($item->getRowTotal() + $item->getTaxAmount()) / $item->getQty());
+                $tax = Amount::fromEuro($item->getTaxPercent());
                 $lineItemBuilder = (new LineItemBuilder())
                     ->setQuantity($item->getQty())
                     ->setProductCode($item->getSku())
                     ->setDescription($item->getName())
-                    ->setAmount(Amount::fromEuro($item->getPrice()))
-                    ->setVat(0) // TODO: TAX
+                    ->setAmount($itemPrice)
+                    ->setVat($tax->getCents())
                     ->setCurrency("EUR");
                 if ($item->getDiscountAmount() > 0) {
                     $lineItemBuilder->addSubItem(
                         (new LineItemBuilder())
-                        ->setQuantity(1)
-                        ->setAmount(Amount::fromEuro(- $item->getDiscountAmount()))
-                        ->setVat(0)
-                        ->setDescription("Magento discount")
-                        ->setCurrency("EUR")
-                        ->build()
+                            ->setQuantity(1)
+                            ->setProductCode("DISCOUNT")
+                            ->setAmount(Amount::fromEuro(- $item->getDiscountAmount()))
+                            ->setVat(0)
+                            ->setDescription("Magento discount")
+                            ->setCurrency("EUR")
+                            ->build()
                     );
                 }
                 $transactionBuilder->addLineItem(

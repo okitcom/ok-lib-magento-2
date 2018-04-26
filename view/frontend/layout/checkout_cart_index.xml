@@ -1,0 +1,12 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="checkout.cart.methods">
+            <block class="Okitcom\OkLibMagento\Block\Button\Checkout"
+                   name="ok-checkout"
+                   template="Okitcom_OkLibMagento::okcheckout.phtml"
+                   ifconfig="ok/checkout/enable_cash"
+                    after="checkout.cart.methods.onepage.bottom">
+            </block>
+        </referenceContainer>
+    </body>
+</page>

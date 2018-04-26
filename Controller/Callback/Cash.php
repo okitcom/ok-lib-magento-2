@@ -7,9 +7,9 @@
 namespace Okitcom\OkLibMagento\Controller\Callback;
 
 
+use Magento\Checkout\Model\Cart;
 use OK\Model\Network\Exception\NetworkException;
 use Okitcom\OkLibMagento\Controller\CheckoutAction;
-use Okitcom\OkLibMagento\Helper\ConfigHelper;
 use Okitcom\OkLibMagento\Model\Checkout;
 use Okitcom\OkLibMagento\Model\CheckoutFactory;
 use Okitcom\OkLibMagento\Model\Resource\Checkout\Collection;
@@ -27,8 +27,14 @@ class Cash extends CheckoutAction {
     protected $checkoutCollection;
 
     /**
+     * @var Cart
+     */
+    protected $cart;
+
+    /**
      * Constructor
      *
+     * @param \Magento\Checkout\Model\Cart $cart
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Checkout\Model\Session $session
@@ -42,6 +48,7 @@ class Cash extends CheckoutAction {
      * @param \Magento\Framework\Math\Random $mathRandom
      */
     public function __construct(
+        \Magento\Checkout\Model\Cart $cart,
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Checkout\Model\Session $session,
@@ -54,6 +61,7 @@ class Cash extends CheckoutAction {
         \Okitcom\OkLibMagento\Helper\CheckoutHelper $checkoutHelper,
         \Magento\Framework\Math\Random $mathRandom
     ) {
+        $this->cart = $cart;
         $this->quoteRepository = $quoteRepository;
         $this->checkoutCollection = $checkoutCollection;
         parent::__construct($context, $resultJsonFactory, $session, $checkoutFactory, $configHelper, $checkoutHelper, $customerSession, $quoteHelper, $mathRandom);
@@ -97,6 +105,8 @@ class Cash extends CheckoutAction {
                         $checkout->setSalesOrderId($order->getEntityId());
                         $checkout->save();
                     }
+
+                    $this->cart->truncate();
 
                     $redirect = $this->resultRedirectFactory->create();
                     $redirect->setPath( 'checkout/onepage/success');

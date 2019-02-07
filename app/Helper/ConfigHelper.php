@@ -88,7 +88,7 @@ class ConfigHelper extends AbstractHelper
         $env = $this->getGeneralConfig("environment");
         $map = [
             "production" => "secure",
-            "development" => "dev",
+            "development" => "local",
             "alpha" => "alpha",
             "test" => "test"
         ];

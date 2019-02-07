@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  web:
+    build: .
+    ports:
+      - "12345:80"
+    links:
+      - db
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: magento
+      MYSQL_USER: magento
+      MYSQL_PASSWORD: magento
+      MAGENTO_LANGUAGE: en_US
+      MAGENTO_TIMEZONE: Europe/Amsterdam
+      MAGENTO_DEFAULT_CURRENCY: EUR
+      MAGENTO_URL: http://local.magento:12345/
+      MAGENTO_USE_SECURE: 0
+      MAGENTO_BASE_URL_SECURE: 0
+      MAGENTO_USE_SECURE_ADMIN: 0
+      MAGENTO_BACKEND_FRONTNAME: admin
+      MAGENTO_ADMIN_FIRSTNAME: Mage
+      MAGENTO_ADMIN_LASTNAME: Admin
+      MAGENTO_ADMIN_EMAIL: admin@example.org
+      MAGENTO_ADMIN_USERNAME: admin
+      MAGENTO_ADMIN_PASSWORD: test123
+    extra_hosts:
+      - "local.okit.io:192.168.65.2"
+  db:
+    image: mysql:5.6.23
+    volumes:
+      - $PWD/docker-data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: myrootpassword
+      MYSQL_DATABASE: magento
+      MYSQL_USER: magento
+      MYSQL_PASSWORD: magento
+    healthcheck:
+      test: "mysqladmin ping --silent"

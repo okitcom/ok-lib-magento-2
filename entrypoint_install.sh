@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 echo "[entry point] start"
 
-sleep 2
-while ! mysqladmin ping -h"$MYSQL_HOST" 
-silent; do
-    echo "[entry point] waiting for db to start"
-    sleep 1
-done
-sleep 2
+echo "[entry point] waiting for db to start"
+sleep 10 | telnet "$MYSQL_HOST" 3306
+
 echo "[entry point] mysql started"
 
 echo "[entry point] Installing magento"

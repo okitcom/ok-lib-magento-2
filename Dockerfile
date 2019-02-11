@@ -1,15 +1,10 @@
 FROM alexcheng/magento2
 
 RUN apt-get update && apt-get install -y \
-  mysql-client
+  telnet
 
-#RUN mkdir /var/www/oklib
-#COPY . /var/www/oklib
-#RUN rm -rf /var/www/oklib/docker /var/www/oklib/.git
-#RUN chown -R www-data:www-data /var/www/
-#
-#COPY docker/bin/* /usr/local/bin/
 COPY --chown=www-data:www-data app/ /var/www/html/app/code/Okitcom/OkLibMagento/
+COPY --chown=www-data:www-data lib/ /var/www/html/app/code/OK
 
 COPY entrypoint_install.sh /sbin/entrypoint_install.sh
 RUN chmod +x /sbin/entrypoint_install.sh

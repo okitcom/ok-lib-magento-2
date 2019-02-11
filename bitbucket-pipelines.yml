@@ -6,6 +6,8 @@ pipelines:
         name: build artifact
         caches:
           - docker
+        services:
+          - docker
         script:
           - docker build -t ok-magento-2 .
   branches:

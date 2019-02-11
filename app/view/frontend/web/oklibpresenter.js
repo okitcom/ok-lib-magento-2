@@ -1,11 +1,13 @@
 define(
     [
         'jquery',
-        'mage/url'
+        'mage/url',
+        'https://okit.com/js/oklib/dist/oklib.min.js'
     ],
     function (
         $,
-        url
+        url,
+        oklib
     ) {
         'use strict';
 
@@ -27,7 +29,7 @@ define(
                 const current = window.okLibType;
                 if (current === type) {
                     // just show the lib
-                    window.oklib.show();
+                    oklib.show();
                     return true;
                 }
                 return false;
@@ -38,10 +40,10 @@ define(
                  */
                 const current = window.okLibType;
                 if (typeof current !== 'undefined' && current != null) {
-                    window.oklib.remove();
+                    oklib.remove();
                 }
                 window.okLibType = type;
-                window.oklib.init(getLibType(type), data.guid, {
+                oklib.init(getLibType(type), data.guid, {
                     color: "dark",
                     culture: data.culture,
                     loaded: oklib.start,
@@ -51,7 +53,7 @@ define(
             remove: function () {
                 const current = window.okLibType;
                 if (typeof current !== 'undefined') {
-                    window.oklib.remove();
+                    oklib.remove();
                 }
                 window.okLibType = null;
             }

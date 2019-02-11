@@ -1,0 +1,29 @@
+image: atlassian/pipelines-awscli
+
+pipelines:
+  default:
+    - step:
+        name: build artifact
+        caches:
+          - docker
+        script:
+          - docker build -t ok-magento-2 .
+  branches:
+    master:
+      - step:
+          name: build & push docker image
+          caches:
+            - docker
+          services:
+            - docker
+          script:
+            - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_LAMBDA_USER
+            - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_LAMBDA_USER
+            - echo "Building docker image"
+            - docker build -t ok-magento-2 .
+            - echo "Tag docker image"
+            - docker tag ok-magento-2:latest repository.okit.io:5001/ok-magento-2:latest
+            - echo "Login to Nexue"
+            - docker login repository.okit.io:5001 -u $NEXUS_TEST_USERNAME -p $NEXUS_TEST_PASSWORD
+            - echo "Push docker image"
+            - docker push repository.okit.io:5001/ok-magento-2:latest

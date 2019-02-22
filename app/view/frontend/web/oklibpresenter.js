@@ -2,7 +2,7 @@ define(
     [
         'jquery',
         'mage/url',
-        'https://okit.com/js/oklib/dist/oklib.min.js'
+        'https://ok.app/js/oklib/dist/oklib-lite.min.js'
     ],
     function (
         $,
@@ -11,51 +11,47 @@ define(
     ) {
         'use strict';
 
-        var getLibType = function(type) {
-            switch (type) {
-                case "open":
-                    return "a";
-                case "cash":
-                    return "t";
-            }
-            return null;
-        };
+        var oklibCash = new OKLIBLite();
+        var oklibOpen = new OKLIBLite();
 
         return {
             showExisting: function (type) {
-                /**
-                 * Either cash or open
-                 */
-                const current = window.okLibType;
-                if (current === type) {
-                    // just show the lib
-                    oklib.show();
-                    return true;
+                if (type === 'cash') {
+                    oklibCash.show();
+                } else if (type === 'open') {
+                    oklibOpen.show();
                 }
-                return false;
             },
             showNew: function (type, data) {
-                /**
-                 * Either cash or open
-                 */
-                const current = window.okLibType;
-                if (typeof current !== 'undefined' && current != null) {
-                    oklib.remove();
-                }
-                window.okLibType = type;
-                oklib.init(getLibType(type), data.guid, {
-                    color: "dark",
+                var config = {
+                    color: 'dark',
                     culture: data.culture,
-                    loaded: oklib.start,
                     initiation: data.initiation
-                }, data.environment);
-            },
-            remove: function () {
-                const current = window.okLibType;
-                if (typeof current !== 'undefined') {
-                    oklib.remove();
+                };
+
+                if (type === 'cash') {
+                    config.loaded = oklibCash.start;
+                    oklibCash.init('t', data.guid, config, data.environment);
+                } else if (type === 'open') {
+                    config.loaded = oklibOpen.start;
+                    oklibOpen.init('a', data.guid, config, data.environment);
                 }
-                window.okLibType = null;
+            },
+            isInitialized: function (type) {
+                if (type === 'cash') {
+                    return oklibCash.isInitialized();
+                } else if (type === 'open') {
+                    return oklibOpen.isInitialized();
+                }
+            },
+            reset: function (type) {
+                if (type === 'cash') {
+                    oklibCash.hide();
+                    oklibCash = new OKLIBLite();
+                } else if (type === 'open') {
+                    oklibOpen.hide();
+                    oklibOpen = new OKLIBLite();
+                }
             }
         };
 

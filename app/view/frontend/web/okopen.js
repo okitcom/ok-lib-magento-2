@@ -19,11 +19,12 @@ define(
 
         return function (config, element) {
 
-            const type = 'open';
+            var type = 'open';
             $(element).on('click', function(e) {
 
-                if (!oklibpresenter.showExisting(type)) {
-
+                if (oklibpresenter.isInitialized(type)) {
+                    oklibpresenter.showExisting(type);
+                } else {
                     $(element).addClass("ok-button-progress");
 
                     $.ajax({

@@ -21,8 +21,8 @@ define(
 
         return function (config, element) {
 
-            const type = 'cash';
-            const addtocart_form_selector = "#product_addtocart_form";
+            var type = 'cash';
+            var addtocart_form_selector = "#product_addtocart_form";
             $(element).on('click', function(e) {
                 e.preventDefault();
 
@@ -31,7 +31,7 @@ define(
                 // TODO: Check if user changed the select options
                 var formData = form.serialize();
                 if (lastSelectedOptions !== formData) {
-                    oklibpresenter.remove();
+                    oklibpresenter.reset(type);
                 }
                 lastSelectedOptions = formData;
 
@@ -42,7 +42,9 @@ define(
                 }
 
 
-                if (!oklibpresenter.showExisting(type)) {
+                if (oklibpresenter.isInitialized(type)) {
+                    oklibpresenter.showExisting(type);
+                } else {
                     $(element).addClass("ok-button-progress");
                     $.ajax({
                         showLoader: true,

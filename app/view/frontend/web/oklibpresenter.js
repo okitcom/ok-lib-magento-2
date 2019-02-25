@@ -46,10 +46,14 @@ define(
             },
             reset: function (type) {
                 if (type === 'cash') {
-                    oklibCash.hide();
+                    if (oklibCash.isInitialized()) {
+                        oklibCash.hide();
+                    }
                     oklibCash = new oklib.OKLIBLite();
                 } else if (type === 'open') {
-                    oklibOpen.hide();
+                    if (oklibOpen.isInitialized()) {
+                        oklibOpen.hide();
+                    }
                     oklibOpen = new oklib.OKLIBLite();
                 }
             }

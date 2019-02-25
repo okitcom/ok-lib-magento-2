@@ -11,8 +11,8 @@ define(
     ) {
         'use strict';
 
-        var oklibCash = new OKLIBLite();
-        var oklibOpen = new OKLIBLite();
+        var oklibCash = new oklib.OKLIBLite();
+        var oklibOpen = new oklib.OKLIBLite();
 
         return {
             showExisting: function (type) {
@@ -47,10 +47,10 @@ define(
             reset: function (type) {
                 if (type === 'cash') {
                     oklibCash.hide();
-                    oklibCash = new OKLIBLite();
+                    oklibCash = new oklib.OKLIBLite();
                 } else if (type === 'open') {
                     oklibOpen.hide();
-                    oklibOpen = new OKLIBLite();
+                    oklibOpen = new oklib.OKLIBLite();
                 }
             }
         };

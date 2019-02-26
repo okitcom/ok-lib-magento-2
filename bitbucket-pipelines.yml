@@ -24,8 +24,24 @@ pipelines:
             - echo "Building docker image"
             - docker build -t ok-magento-2 .
             - echo "Tag docker image"
-            - docker tag ok-magento-2:latest repository.okit.io:5001/ok-magento-2:latest
+            - docker tag ok-magento-2:latest repository.okit.io:5001/ok-magento-2:$BITBUCKET_BUILD_NUMBER
             - echo "Login to Nexue"
             - docker login repository.okit.io:5001 -u $NEXUS_TEST_USERNAME -p $NEXUS_TEST_PASSWORD
             - echo "Push docker image"
-            - docker push repository.okit.io:5001/ok-magento-2:latest
+            - docker push repository.okit.io:5001/ok-magento-2:$BITBUCKET_BUILD_NUMBER
+      - step:
+          name: Update image version in deployment
+          script:
+            - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_MAGENTO_EKS_DEPLOYMENT_USER
+            - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_MAGENTO_EKS_DEPLOYMENT_USER
+            - echo "Setup kubectl"
+            - apk add --no-cache curl
+            - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+            - chmod +x ./kubectl
+            - mv kubectl /usr/local/bin
+            - curl -LO https://amazon-eks.s3-us-west-2.amazonaws.com/1.11.5/2018-12-06/bin/linux/amd64/aws-iam-authenticator
+            - chmod +x ./aws-iam-authenticator
+            - mv aws-iam-authenticator /usr/local/bin
+            - aws --region eu-west-1 eks update-kubeconfig --name eks-dev
+            - echo "Updating version image"
+            - kubectl -n magento-demo set image deployment.v1.apps/magento-demo-2 magento-demo-2=repository.okit.io:5001/ok-magento-2:$BITBUCKET_BUILD_NUMBER

@@ -2,7 +2,7 @@ define(
     [
         'jquery',
         'mage/url',
-        'https://ok.app/js/oklib/dist/oklib-lite.min.js'
+        'https://ok.app/js/oklib/dist/oklib.min.js'
     ],
     function (
         $,
@@ -11,8 +11,8 @@ define(
     ) {
         'use strict';
 
-        var oklibCash = new oklib.OKLIBLite();
-        var oklibOpen = new oklib.OKLIBLite();
+        var oklibCash = new oklib.OKLIB();
+        var oklibOpen = new oklib.OKLIB();
 
         return {
             showExisting: function (type) {
@@ -49,12 +49,12 @@ define(
                     if (oklibCash.isInitialized()) {
                         oklibCash.hide();
                     }
-                    oklibCash = new oklib.OKLIBLite();
+                    oklibCash = new oklib.OKLIB();
                 } else if (type === 'open') {
                     if (oklibOpen.isInitialized()) {
                         oklibOpen.hide();
                     }
-                    oklibOpen = new oklib.OKLIBLite();
+                    oklibOpen = new oklib.OKLIB();
                 }
             }
         };

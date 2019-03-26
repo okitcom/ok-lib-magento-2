@@ -47,8 +47,10 @@ define(
              */
             open: function () {
 
-                const type = 'cash';
-                if (!oklibpresenter.showExisting(type)) {
+                var type = 'cash';
+                if (oklibpresenter.isInitialized(type)) {
+                    oklibpresenter.showExisting(type);
+                } else {
 
                     $(this).addClass("ok-button-progress");
 

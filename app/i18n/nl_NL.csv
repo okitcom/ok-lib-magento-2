@@ -1,0 +1,24 @@
+"Buy now","Buy now"
+"Log in with OK","Log in"
+"Quick checkout","Quick checkout"
+
+"OK Login failed","Your login attempt failed"
+"OK Login succeeded","Succesfully logged in with OK"
+
+"OK Open Status OK","Succesfully authenticated with OK"
+"OK Open Status NotOKExpired","Your OK request has expired. Please try again."
+"OK Open Status NotOKDeclinedByUser", "You have declined the request."
+"OK Open Status NotOKCancelled","Your OK request was cancelled."
+"OK Open Status OPEN","Your OK request is still open. Please complete it in your app."
+"OK Open Status ERROR","Your OK request failed."
+"OK Open Status NOTFOUND","Your login attempt failed."
+
+"OK Cash Status OK","Succesfully paid with OK"
+"OK Cash Status NotOKExpired","Your OK request has expired. Please try again."
+"OK Cash Status NotOKDeclinedByUser", "You have declined the transaction."
+"OK Cash Status NotOKCancelled","Your OK transaction was cancelled."
+"OK Cash Status OPEN","Your OK transaction is still open. Please complete it in your app."
+"OK Cash Status ERROR","Your OK transaction failed."
+"OK Cash Status NOTFOUND","Your transaction was not found."
+
+"View transaction in OK Works","View transaction in OK Works"

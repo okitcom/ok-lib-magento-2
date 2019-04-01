@@ -2,7 +2,6 @@
     <head>
         <css src="Okitcom_OkLibMagento/css/glober.css" />
         <css src="Okitcom_OkLibMagento/css/oklib.css" />
-        <css src="Okitcom_OkLibMagento/css/okluma.css" />
     </head>
     <body>
         <referenceBlock name="header.links">

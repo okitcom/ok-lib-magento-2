@@ -19,8 +19,8 @@ pipelines:
           services:
             - docker
           script:
-            - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_LAMBDA_USER
-            - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_LAMBDA_USER
+            - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_LAMBDA_USER
+            - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_LAMBDA_USER
             - echo "Building docker image"
             - docker build -t ok-magento-2 .
             - echo "Tag docker image"
@@ -32,8 +32,8 @@ pipelines:
       - step:
           name: Update image version in deployment
           script:
-            - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_MAGENTO_EKS_DEPLOYMENT_USER
-            - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_MAGENTO_EKS_DEPLOYMENT_USER
+            - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_MAGENTO_EKS_DEPLOYMENT_USER
+            - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_MAGENTO_EKS_DEPLOYMENT_USER
             - echo "Setup kubectl"
             - apk add --no-cache curl
             - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl

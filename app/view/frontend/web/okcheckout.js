@@ -24,7 +24,9 @@ define(
             $(element).on('click', function(e) {
                 e.preventDefault();
 
-                if (!oklibpresenter.showExisting(type)) {
+                if (oklibpresenter.isInitialized(type)) {
+                    oklibpresenter.showExisting(type);
+                } else {
                     $(element).addClass("ok-button-progress");
                     $.ajax({
                         showLoader: true,

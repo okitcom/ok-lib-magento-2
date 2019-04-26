@@ -32,11 +32,6 @@ class ConfigHelper extends AbstractHelper
     const STATE_CHECKOUT_SUCCESS = "ClosedAndCaptured";
     const STATE_AUTHORIZATION_SUCCESS = "Processed";
 
-    const SUPPORTED_LOCALES = [
-        "nl_NL", "en_GB"
-    ];
-    const DEFAULT_LOCALE = "en_GB";
-
     const OK_BASE_URL = "okit.com";
 
     public function __construct(Context $context,
@@ -101,11 +96,11 @@ class ConfigHelper extends AbstractHelper
 
     public function getLocale() {
         $code = $this->storeManager->getStore()->getLocaleCode();
-        if (!in_array($code, ConfigHelper::SUPPORTED_LOCALES)) {
-            $code = ConfigHelper::DEFAULT_LOCALE;
+
+        if (strtolower(substr( $code, 0, 1 )) === "nl") {
+            return 'nl-NL';
+        }else {
+            return 'en-GB';
         }
-        return str_replace("_", "-", $code);
     }
-
-
 }

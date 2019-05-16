@@ -6,12 +6,11 @@
 
 namespace Okitcom\OkLibMagento\Block\Middleware;
 
-
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote;
 use OK\Model\Amount;
-use OK\Model\Cash\LineItem;
 use OK\Model\Cash\Transaction;
+use Okitcom\OkLibMagento\Helper\DiscountHelper;
 
 /**
  * Class LineItemReducer. Compares lineitems from OK and applies discounts to magento products
@@ -19,34 +18,41 @@ use OK\Model\Cash\Transaction;
  */
 class LineItemReducer extends AbstractReducer
 {
+    /**
+     * @var DiscountHelper
+     */
+    private $discountHelper;
 
-    function execute(Quote $quote, Transaction $response) {
+    /**
+     * LineItemReducer constructor.
+     *
+     * @param DiscountHelper $discountHelper
+     */
+    public function __construct(DiscountHelper $discountHelper)
+    {
+        $this->discountHelper = $discountHelper;
+    }
 
-        $quoteItems = $quote->getAllItems();
-
-        $lineItems = $response->lineItems->all();
-        foreach ($lineItems as $lineItem) {
-            if (isset($lineItem->subItems) && $lineItem->subItems != null) {
-                $quoteItem = $this->findQuoteProduct($lineItem->productCode, $quoteItems);
-
-                if ($quoteItem != null) {
-                    $discount = Amount::fromCents(0);
-                    foreach ($lineItem->subItems->all() as $subItem) {
-                        if (isset($subItem->type) && $subItem->type == "Coupon") {
-                            // calculate discount
-                            $discount = $discount->sub($subItem->totalAmount);
-                        }
-                    }
-
-                    $quoteItem->setDiscountAmount($discount->getEuro());
-                    $quoteItem->setBaseDiscountAmount($discount->getEuro());
-                    $quoteItem->save();
-                }
-
-
-
-            }
+    function execute(Quote $quote, Transaction $transaction)
+    {
+        $discount = $this->discountHelper->getDiscountFromTransaction($transaction);
+        if ($discount->getCents() === 0) {
+            return $this;
         }
+
+        $product = $this->discountHelper->getDiscountProduct($transaction, $discount);
+        $config = new \Magento\Framework\DataObject();
+        $config->setItem([
+            'product' => $product->getId(),
+            'qty' => 1,
+            'price' => - $discount->getEuro(),
+        ]);
+        $quoteItem = $quote->addProduct($product, $config);
+        $quoteItem->setDiscountAmount($discount->getEuro());
+        $quoteItem->setBaseDiscountAmount($discount->getEuro());
+        $quoteItem->save();
+
+        return $this;
     }
 
     /**
@@ -63,5 +69,4 @@ class LineItemReducer extends AbstractReducer
         }
         return null;
     }
-
 }

@@ -32,19 +32,40 @@ class OkCashPayment extends AbstractMethod
 //        return $this;
 //    }
 
-    public function canUseForCurrency($currencyCode) {
+    /**
+     * @var \Okitcom\OkLibMagento\Helper\CheckoutHelper
+     */
+    private $checkoutHelper;
+
+    public function canUseForCurrency($currencyCode)
+    {
         $supported = [
-            "EUR"
+            "EUR",
         ];
         return in_array($currencyCode, $supported);
     }
 
-    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null) {
+    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    {
         // check if an OK checkout record exists
         return parent::isAvailable($quote) && $this->getHelper()->getByQuote($quote->getId()) != null;
     }
 
-    public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount) {
+    /**
+     * @return mixed|\Okitcom\OkLibMagento\Helper\CheckoutHelper
+     */
+    protected function getHelper()
+    {
+        if ($this->checkoutHelper == null) {
+            //Get Object Manager Instance
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $this->checkoutHelper = $objectManager->create('Okitcom\OkLibMagento\Helper\CheckoutHelper');
+        }
+        return $this->checkoutHelper;
+    }
+
+    public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
+    {
         /** @var Order $order */
         $order = $payment->getOrder();
         $checkout = $this->getHelper()->getByQuote($order->getQuoteId());
@@ -60,7 +81,8 @@ class OkCashPayment extends AbstractMethod
         return $this;
     }
 
-    public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount) {
+    public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
+    {
         // this is basically a formality
         /** @var Order $order */
         $order = $payment->getOrder();
@@ -72,42 +94,24 @@ class OkCashPayment extends AbstractMethod
         // Match amounts
         $service = $this->getHelper()->getCashService();
         $okTransaction = $service->get($checkout->getGuid());
-        if ($okTransaction->amount->getEuro() < $amount) {
-            $this->_logger->error("OK transaction amount was smaller than the transaction.",
+
+        $paidAmount = $okTransaction->authorisationResult->amount->getEuro();
+        if ($paidAmount != $amount) {
+            $this->_logger->error("OK transaction amount was not equal to the transaction.",
                 [
                     "ok_transaction_amount" => $okTransaction->amount->getEuro(),
-                    "capture_amount" => $amount
+                    "capture_amount" => $amount,
                 ]
             );
             throw new LocalizedException(__("Transaction could not be processed."));
         }
 
         $payment->setTransactionAdditionalInfo(
-                self::KEY_OK_TRANSACTION_ID,
-                $checkout->getOkTransactionId());
+            self::KEY_OK_TRANSACTION_ID,
+            $checkout->getOkTransactionId());
         $payment->setTransactionId($checkout->getOkTransactionId()
-            )->setParentTransactionId($checkout->getOkTransactionId());
+        )->setParentTransactionId($checkout->getOkTransactionId());
 
         return $this;
     }
-
-
-    /**
-     * @var \Okitcom\OkLibMagento\Helper\CheckoutHelper
-     */
-    private $checkoutHelper;
-
-    /**
-     * @return mixed|\Okitcom\OkLibMagento\Helper\CheckoutHelper
-     */
-    protected function getHelper() {
-        if ($this->checkoutHelper == null) {
-            //Get Object Manager Instance
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $this->checkoutHelper = $objectManager->create('Okitcom\OkLibMagento\Helper\CheckoutHelper');
-        }
-        return $this->checkoutHelper;
-    }
-
-
 }
